@@ -1,5 +1,5 @@
 <h3>Submit Code Plugin</h3>
-Version: 1.0.0
+Version: 1.0.1
 <br>
 Platform: Wordpress
 <br>
