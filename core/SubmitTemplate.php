@@ -8,10 +8,10 @@
 
 require 'collection/TestCase.php';
 
-class SubmitCode
+class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = ['C/C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34];
+    private $lang_id = ['C (gcc 7.2.0)' => 4, 'C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -116,11 +116,14 @@ class SubmitCode
                 echo '<button onclick="submit_code()" class="submit-code-btn">Submit</button>';
                 echo '<p></p>';
                 echo '<div class="submit-result"></div>';
+                echo '<button class="button-show-submit-history" onclick="show_submit_history()">Show submit history</button>';
+                echo '<div class="submit-history-result"></div>';
 
                 echo '<script>
-                            var clicked = 0;
-                            var input = new Array();
-                            var output = new Array();
+                            let clicked = 0;
+                            let clickShowSubmitHistory = 0;
+                            let input = new Array();
+                            let output = new Array();
                         </script>';
 
                 foreach ($this->test_case_array as $value) {
@@ -129,49 +132,50 @@ class SubmitCode
                 }
 
                 echo '<script>
-                    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
-                                            lineNumbers: true,
-                                            theme: "material"
-                                          });
-                    
                     function b64DecodeUnicode(str) {
                         return decodeURIComponent(atob(str).split(\'\').map(function(c) {
                                 return \'%\' + (\'00\' + c.charCodeAt(0).toString(16)).slice(-2);
                             }).join(\'\'));
                     }
-                    
-                    
+                   
                    function b64EncodeUnicode(str) {
                         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
                             function toSolidBytes(match, p1) {
                                 return String.fromCharCode(\'0x\' + p1);
                         }));
                     }
+                </script>';
+
+                echo '<script>
+                    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+                                            lineNumbers: true,
+                                            theme: "material"
+                                          });
                     
                     async function submit_code() {
-                        var source_code = myCodeMirror.getValue()
-                        if (source_code !== "")
+                        let source_code = myCodeMirror.getValue()
+                        if (source_code.trim() !== "")
                             clicked++;
-                        var count_unit_test = 1;
-                        var total = input.length;
-                        var pass = 0;
-                        var err = 0;
+                        let count_unit_test = 1;
+                        let total = input.length;
+                        let pass = 0;
+                        let err = 0;
                         await $(".submit-code-btn").css("color: while")
-                        var lang_id = await $(".lang_id").find(":selected").val();
+                        let lang_id = await $(".lang_id").find(":selected").val();
                         
                         if (clicked === 1) {
                             await $(".submit-code-btn").text("Wait...");
 
                             await $( ".submit-result" ).empty();
-                            if (source_code != ""){
-                                for (var i=0; i< input.length; i++){
+                            if (source_code.trim() !== ""){
+                                for (let i=0; i< input.length; i++){
                                     if (err === 1){
                                         break;
                                     }
                                     await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
                                     await $.ajax({
                                               method: "POST",
-                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/request.php",
+                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api.php",
                                               data: {
                                                   source: b64EncodeUnicode(source_code),
                                                   stdin: b64EncodeUnicode(input[i]),
@@ -180,20 +184,20 @@ class SubmitCode
                                                }
                                             })
                                           .done(async function(data) {
-                                              var json = JSON.stringify(data);
-                                              var dataJson = JSON.parse(json);
-                                              var description = dataJson.status.description;
-                                              var expected_output = output[i];
+                                              let json = JSON.stringify(data);
+                                              let dataJson = JSON.parse(json);
+                                              let description = dataJson.status.description;
+                                              let expected_output = output[i];
                                              
                                               console.log(dataJson);
                                               
                                               if (description === "Compilation Error"){
                                                     err = 1;      
-                                                    var complite_output = b64DecodeUnicode(dataJson.compile_output);
+                                                    let complite_output = b64DecodeUnicode(dataJson.compile_output);
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
                                                     await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
-                                              } else if (description !== "Accepted" && description !== "Wrong Answer"){
+                                              } else if (description !== "Accepted" && description !== "Wrong Answer" && description !== "Internal Error"){
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
                                               }                    
@@ -205,10 +209,21 @@ class SubmitCode
                                               }
                                               
                                               if (description === "Wrong Answer"){
-                                                    var your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
+                                                    let your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
                                                     console.log(your_ouput)
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +"</p>");
+                                                    await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
+                                                                                    ""+input[i] +"\n" +
+                                                                                    "<span class=result-title>Test Output:</span>\n"+expected_output+"\n" +
+                                                                                    "<span class=result-title>Your Output:</span>\n"+your_ouput+"</pre>");
+                                              }
+                                              
+                                              if (description === "Internal Error"){
+                                                    let your_ouput = null
+                                                    console.log(your_ouput)
+                                                    await $("#on-load-test").remove();
+                                                    await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +" (No Output)</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
                                                                                     ""+input[i] +"\n" +
                                                                                     "<span class=result-title>Test Output:</span>\n"+expected_output+"\n" +
@@ -233,15 +248,77 @@ class SubmitCode
                                 else
                                     await $(".submit-result").append("<h4 class=accepted> Passed: "+pass+"/"+total+"</h4>");
                                 
+                                await $.ajax({
+                                    method: "POST",
+                                    url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestSaveSourceCode.php",
+                                    data: {
+                                         comment_post_ID: "' . get_the_ID() . '",
+                                         comment_author: "' . wp_get_current_user()->user_login . '",
+                                         comment_author_email: "' . wp_get_current_user()->user_email . '",
+                                         comment_content: b64EncodeUnicode(source_code),
+                                         user_id: "' . get_current_user_id() . '",
+                                         pass: pass+"/"+total
+                                    }
+                                 })
+                                .done(async function(data) {
+                                    if (data.trim() === "1")
+                                        console.log("Saved");
+                                    else {
+                                        console.log("Save Error");
+                                        console.log(data);
+                                    }
+                                })
+                                .fail(async function(jqXHR, textStatus, errorThrown) {
+                                  console.log("Save Error");
+                                });
+                                
                                 await $("#on-load-test").remove();
                                 await $(".submit-code-btn").text("Submit");
                                 clicked = 0;
                             }
                         }
                     }
-              </script>';
+                </script>';
+                echo '<script>
+                        async function show_submit_history() {
+                            clickShowSubmitHistory++;
+                            if (clickShowSubmitHistory %2 !== 0) {
+                                await $(".button-show-submit-history").text("Hidden submit history");                          
+                                await $(".submit-history-result").empty();
+                                await $.ajax({
+                                    method: "POST",
+                                    url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestReadSourceCode.php",
+                                    data: {
+                                        post_id: "' . get_the_ID() . '",
+                                        user_id: "' . get_current_user_id() . '"
+                                    }
+                                })
+                                .done(async function(data) {
+                                     console.log(data);
+                                     for (let i=0; i<data.source.length; i++) { 
+                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">"+data.source[i].date+". Pass: "+data.source[i].pass+"</p>");
+                                          await $("#submit-history-result-date-"+i).append("<pre class=submit-history-result-source id=submit-history-result-source-"+i+"></pre>");
+                                          await $("#submit-history-result-source-"+i).text(b64DecodeUnicode(data.source[i].source));
+                                     }
+                                })
+                                .fail(function(jqXHR, textStatus, errorThrown) {
+                                     console.log("Error connect");
+                                });
+                            } else {
+                                await $(".button-show-submit-history").text("Show submit history");       
+                                await $(".submit-history-result").empty();                               
+                            }
+                        }
+                </script>';
+                echo '<script>
+                           function show_code(obj) {
+                               let tagPre = obj.getElementsByTagName("pre")[0]
+                               let source = tagPre.textContent;
+                               alert(source);
+                           }
+                    </script>';
             } else {
-                $suggestLogin = '<p>Bạn chưa đăng nhập? <b><a style="color: #364956" href="'.get_site_url().'/login">Đăng nhập </a></b>để Submit ngay!</p>';
+                $suggestLogin = '<p>Bạn chưa đăng nhập? <b><a style="color: #364956" href="' . get_site_url() . '/login">Đăng nhập </a></b>để Submit ngay!</p>';
                 return $suggestLogin;
             }
         });

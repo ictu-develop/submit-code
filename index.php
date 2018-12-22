@@ -11,8 +11,8 @@
  * GitHub Plugin URI:
  */
 
-require 'core/SubmitCode.php';
+require 'core/SubmitTemplate.php';
 
-$submitCode = new SubmitCode();
-$submitCode->addFilterContent();
-$submitCode->addFilterSubmit();
+$submit = new SubmitTemplate();
+$submit->addFilterContent();
+$submit->addFilterSubmit();

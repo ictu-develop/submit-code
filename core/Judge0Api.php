@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Created by PhpStorm.
@@ -6,9 +5,8 @@
  * Date: 12/2/18
  * Time: 2:23 PM
  */
-header('Content-Type: application/json; charset=UTF-8');
 
-class Request
+class Judge0Api
 {
     private $api_url_submit = 'https://api.judge0.com/submissions?wait=true&base64_encoded=true';
 
@@ -29,7 +27,7 @@ class Request
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = trim(curl_exec($ch));
-        echo $response;
+        return $response;
     }
 
 }

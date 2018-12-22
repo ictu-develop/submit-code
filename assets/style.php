@@ -78,4 +78,27 @@ echo '<style>
             .result-title {
                 font-weight: bold;
             }
+            .button-show-submit-history{
+                background: #263238;
+                color: white;
+                width: 160px;
+                height: 40px;
+                text-align: center;
+                border-radius: 5px;
+                margin-top: 20px;
+                border: 0px solid; 
+                margin-bottom: 15px;
+            }
+            .submit-history-result-date{
+                cursor: pointer;
+                color: #263238;
+                font-weight: bold;
+                margin-bottom: 0px;
+            }
+            .submit-history-result-source{
+                display: none;
+                background-color: white;
+                padding: 10px 0px 0px 10px;
+                font-size: 14px;
+            }
      </style>';
