@@ -9,8 +9,7 @@
 /*
  *
  * lang_id: 26 (java JDK 9)
- * lang_id: 4 (C - gcc 7.2.0)
- * lang_id: 10 (C++ - g++ 7.2.0)
+ * lang_id: 10 (C/C++ - g++ 7.2.0)
  * lang_id: 22 (Go -1.9)
  * lang_id: 34 (Python - 3.6.0)
  *
@@ -26,10 +25,6 @@ $cpu_time_limit = 5; // default is 2 second
 switch ($lang_id){
     case 26: {
         $cpu_time_limit = 10;
-        setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
-        break;
-    }
-    case 4: {
         setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
         break;
     }

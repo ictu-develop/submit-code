@@ -11,7 +11,7 @@ require 'collection/TestCase.php';
 class SubmitCode
 {
     private $test_case_array = [];
-    private $lang_id = ['C (gcc 7.2.0)' => 4, 'C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34];
+    private $lang_id = ['C/C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34];
     private $all_test_case = '';
 
     private function customTrim($input)
