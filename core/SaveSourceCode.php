@@ -10,7 +10,7 @@ class SaveSourceCode
         require '../../../../wp-load.php';
         $selectTable = $wpdb->get_row("SELECT * FROM wp_comments");
 
-        if(!isset($selectTable->my_custom_posts_column)){
+        if(!isset($selectTable->pass)){
             $wpdb->query("ALTER TABLE wp_comments ADD pass TEXT");
         }
 
