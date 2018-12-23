@@ -328,7 +328,7 @@ class SubmitTemplate
 
                 echo '<script>
                             let myCodeMirror2 = CodeMirror.fromTextArea(document.getElementsByClassName("history-result-source")[0], {
-                                            lineNumbers: true,
+                                            lineNumbers: false,
                                             theme: "material"
                                        });
                     </script>';
