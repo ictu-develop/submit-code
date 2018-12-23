@@ -34,25 +34,25 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
             }
-        case 4: {
+        /*case 4: {
             setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
             break;
-        }
-        case 10:
+        }*/
+        /*case 10:
             {
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
-            }
+            }*/
         case 22:
             {
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
             }
-        case 34:
+        /*case 34:
             {
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
-            }
+            }*/
         default:
             {
                 $cpu_time_limit = 2;

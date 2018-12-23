@@ -11,7 +11,7 @@ require 'collection/TestCase.php';
 class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = ['C (gcc 7.2.0)' => 4, 'C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34];
+    private $lang_id = [/*'C (gcc 7.2.0)' => 4,*/ 'C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26/*, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34*/];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -147,7 +147,7 @@ class SubmitTemplate
                 </script>';
 
                 echo '<script>
-                    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+                    let myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
                                             lineNumbers: true,
                                             theme: "material"
                                           });
@@ -191,12 +191,17 @@ class SubmitTemplate
                                              
                                               console.log(dataJson);
                                               
-                                              if (description === "Compilation Error"){
+                                              if (description === "Compilation Error" || description === "Runtime Error (NZEC)"){
                                                     err = 1;      
-                                                    let complite_output = b64DecodeUnicode(dataJson.compile_output);
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
-                                                    await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
+                                                    if (description === "Compilation Error") {
+                                                        let complite_output = b64DecodeUnicode(dataJson.compile_output);
+                                                        await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
+                                                    } else {
+                                                        let stderr = b64DecodeUnicode(dataJson.stderr);
+                                                        await $(".submit-result").append("<p class=compilation_error>"+stderr +"</p>");
+                                                    }
                                               } else if (description !== "Accepted" && description !== "Wrong Answer" && description !== "Internal Error"){
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
@@ -283,6 +288,7 @@ class SubmitTemplate
                         async function show_submit_history() {
                             clickShowSubmitHistory++;
                             if (clickShowSubmitHistory %2 !== 0) {
+                                await $(".submit-history-result").css("display", "block");
                                 await $(".button-show-submit-history").text("Hidden submit history");                          
                                 await $(".submit-history-result").empty();
                                 await $.ajax({
@@ -296,7 +302,7 @@ class SubmitTemplate
                                 .done(async function(data) {
                                      console.log(data);
                                      for (let i=0; i<data.source.length; i++) { 
-                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">"+data.source[i].date+". Pass: "+data.source[i].pass+"</p>");
+                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">#"+(data.source.length-i)+".<span> Pass: "+data.source[i].pass+"</span></p>");
                                           await $("#submit-history-result-date-"+i).append("<pre class=submit-history-result-source id=submit-history-result-source-"+i+"></pre>");
                                           await $("#submit-history-result-source-"+i).text(b64DecodeUnicode(data.source[i].source));
                                      }
@@ -305,17 +311,66 @@ class SubmitTemplate
                                      console.log("Error connect");
                                 });
                             } else {
+                                await $(".submit-history-result").css("display", "none");
                                 await $(".button-show-submit-history").text("Show submit history");       
                                 await $(".submit-history-result").empty();                               
                             }
                         }
                 </script>';
+
+                echo '<div id="myModal" class="modal">                    
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <p class="history-result-pass"></p>
+                                <textarea class="history-result-source"></textarea>
+                            </div>
+                    </div>';
+
                 echo '<script>
-                           function show_code(obj) {
-                               let tagPre = obj.getElementsByTagName("pre")[0]
+                            let myCodeMirror2 = CodeMirror.fromTextArea(document.getElementsByClassName("history-result-source")[0], {
+                                            lineNumbers: true,
+                                            theme: "material"
+                                       });
+                    </script>';
+
+                echo '<script>
+                           async function show_code(obj) {
+                               let tagPre = obj.getElementsByTagName("pre")[0];
+                               let tagSpan = obj.getElementsByTagName("span")[0];
                                let source = tagPre.textContent;
-                               alert(source);
+                               let pass = tagSpan.textContent;
+                               await $(".modal").css("display", "block");
+                               await $(".history-result-source").text(source);
+                               await $  (".history-result-pass").text(pass);
+                               myCodeMirror2.getDoc().setValue(source);
                            }
+                    </script>';
+
+
+                echo '<script>
+                    let modal = document.getElementById("myModal");                
+                    let btn = document.getElementById("myBtn");                    
+                    let span = document.getElementsByClassName("close")[0];
+                    
+                    $( ".submit-history-result-date" ).hover(
+                          function() {
+                              $(this).css("background", "gray");
+                          }, function() {
+                              $(this).css("background", "red");
+                          }
+                        );
+                    
+                    span.onclick = function() {
+                        modal.style.display = "none";
+                        $(".history-result-source").text("");
+                    }
+                    
+                    window.onclick = function(event) {
+                        if (event.target === modal) {
+                            modal.style.display = "none";
+                            $(".history-result-source").text("");
+                        }
+                    }
                     </script>';
             } else {
                 $suggestLogin = '<p>Bạn chưa đăng nhập? <b><a style="color: #364956" href="' . get_site_url() . '/login">Đăng nhập </a></b>để Submit ngay!</p>';
