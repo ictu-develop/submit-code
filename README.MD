@@ -5,11 +5,8 @@ Platform: Wordpress
 <br>
 Support:
 <ul>
-  <li>C</li>
-  <li>C++</li>
+  <li>C/C++</li>
   <li>Java</li>
-  <li>Go</li>
-  <li>Python</li>
 </ul>
 <h4>How to write test case</h4>
 
