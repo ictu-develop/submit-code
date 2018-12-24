@@ -12,7 +12,7 @@ class SubmitTemplate
 {
     private $test_case_array = [];
     private $lang_id = [/*4 => 'C (gcc 7.2.0)',*/
-         15 => 'C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
+         15 => 'C/C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -249,10 +249,10 @@ class SubmitTemplate
                                 
                                 await $(".submit-result").append("<br><br>");
                                 
-                                if (pass < total/2)
-                                    await $(".submit-result").append("<h4 class=Wrong> Passed: "+pass+"/"+total+"</h4>");
-                                else
+                                if (pass === total)
                                     await $(".submit-result").append("<h4 class=accepted> Passed: "+pass+"/"+total+"</h4>");
+                                else
+                                    await $(".submit-result").append("<h4 class=Wrong> Passed: "+pass+"/"+total+"</h4>");
                                 
                                 await $.ajax({
                                     method: "POST",
@@ -304,7 +304,17 @@ class SubmitTemplate
                                 .done(async function(data) {
                                      console.log(data);
                                      for (let i=0; i<data.source.length; i++) { 
+                                          let total = data.source[i].pass.substring(data.source[i].pass.indexOf("/")+1);
+                                          let pass = data.source[i].pass.substring(0, data.source[i].pass.length - total.length - 1);
+                                          console.log("pass: " + pass + "/" + total);
                                           await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">#"+(data.source.length-i)+". "+data.source[i].date+". <span> Pass: "+data.source[i].pass+" ("+data.source[i].lang+")</span></p>");
+
+                                          if (pass === total) {
+                                                $("#submit-history-result-date-"+i).css("color", "green");
+                                          } else {
+                                                $("#submit-history-result-date-"+i).css("color", "red");
+                                          }
+                                          
                                           await $("#submit-history-result-date-"+i).append("<pre class=submit-history-result-source id=submit-history-result-source-"+i+"></pre>");
                                           await $("#submit-history-result-source-"+i).text(b64DecodeUnicode(data.source[i].source));
                                      }
@@ -353,14 +363,6 @@ class SubmitTemplate
                     let modal = document.getElementById("myModal");                
                     let btn = document.getElementById("myBtn");                    
                     let span = document.getElementsByClassName("close")[0];
-                    
-                    $( ".submit-history-result-date" ).hover(
-                          function() {
-                              $(this).css("background", "gray");
-                          }, function() {
-                              $(this).css("background", "red");
-                          }
-                        );
                     
                     span.onclick = function() {
                         modal.style.display = "none";

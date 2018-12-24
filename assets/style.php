@@ -112,6 +112,7 @@ echo '<style>
                 overflow-x: hidden;    
                 display: none;   
             }
+            
      </style>';
 
 // Modal css
