@@ -11,11 +11,13 @@ class Source
     public $date;
     public $pass;
     public $source;
+    public $lang;
 
-    function __construct($date, $pass, $source)
+    function __construct($date, $pass, $source, $lang)
     {
         $this->date = $date;
         $this->pass = $pass;
         $this->source = $source;
+        $this->lang = $lang;
     }
 }

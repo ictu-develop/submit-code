@@ -11,8 +11,8 @@ require 'collection/TestCase.php';
 class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = [/*'C (gcc 7.2.0)' => 4,*/
-        'C++ (g++ 7.2.0)' => 10, 'Java (JDK 9)' => 26/*, 'Go (1.9)' => 22, 'Python (3.6.0)' => 34*/];
+    private $lang_id = [/*4 => 'C (gcc 7.2.0)',*/
+         15 => 'C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -107,7 +107,7 @@ class SubmitTemplate
             if (is_single() && is_user_logged_in()) {
                 echo '<textarea id="code-editor" name="source" required></textarea>';
                 echo '<select name="lang_id" class="lang_id">';
-                foreach ($this->lang_id as $lang_name => $lang_id) {
+                foreach ($this->lang_id as $lang_id => $lang_name) {
                     if ($_COOKIE['lang_id'] == $lang_id)
                         echo '<option value="' . $lang_id . '" selected>' . $lang_name . '</option>';
                     else
@@ -263,7 +263,8 @@ class SubmitTemplate
                                          email: "' . wp_get_current_user()->user_email . '",
                                          source: b64EncodeUnicode(source_code),
                                          user_id: "' . get_current_user_id() . '",
-                                         pass: pass+"/"+total
+                                         pass: pass+"/"+total,
+                                         lang_id: lang_id
                                     }
                                  })
                                 .done(async function(data) {
@@ -303,7 +304,7 @@ class SubmitTemplate
                                 .done(async function(data) {
                                      console.log(data);
                                      for (let i=0; i<data.source.length; i++) { 
-                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">#"+(data.source.length-i)+". "+data.source[i].date+". <span> Pass: "+data.source[i].pass+"</span></p>");
+                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">#"+(data.source.length-i)+". "+data.source[i].date+". <span> Pass: "+data.source[i].pass+" ("+data.source[i].lang+")</span></p>");
                                           await $("#submit-history-result-date-"+i).append("<pre class=submit-history-result-source id=submit-history-result-source-"+i+"></pre>");
                                           await $("#submit-history-result-source-"+i).text(b64DecodeUnicode(data.source[i].source));
                                      }

@@ -20,10 +20,10 @@ class SaveSourceCode
             )";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        var_dump(dbDelta($sql));
+        dbDelta($sql);
     }
 
-    function save($post_id, $author, $email, $source, $user_id, $pass)
+    function save($post_id, $author, $email, $source, $user_id, $pass, $lang)
     {
         require '../../../../wp-config.php';
         $time = current_time('Y-m-d H:i:s');
@@ -39,6 +39,7 @@ class SaveSourceCode
             'source' => $source,
             'time' => $time,
             'pass' => $pass,
+            'language' => $lang
         );
 
         $insert = $wpdb->insert('wp_submit', $data);

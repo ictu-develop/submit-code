@@ -9,7 +9,8 @@
 class ReadSourceCode
 {
 
-    function read($user_id, $post_id){
+    function read($user_id, $post_id)
+    {
         require '../../../../wp-config.php';
         require 'collection/Source.php';
 
@@ -22,8 +23,11 @@ class ReadSourceCode
                 ORDER BY submit_id DESC ";
 
         $result = $wpdb->get_results($sql);
-        foreach ($result as $value){
-            $array[] = new Source($value->time, $value->pass, $value->source);
+        foreach ($result as $value) {
+            if ($value->language !== null)
+                $array[] = new Source($value->time, $value->pass, $value->source, $value->language);
+            else
+                $array[] = new Source($value->time, $value->pass, $value->source, '');
         }
 
         $hashMap = ['user_id' => $user_id, 'post_id' => $post_id, 'source' => $array];
