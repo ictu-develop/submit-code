@@ -12,20 +12,18 @@ class ReadSourceCode
     function read($user_id, $post_id){
         require '../../../../wp-config.php';
         require 'collection/Source.php';
+
+        global $wpdb;
         $array = [];
 
-        $args = array(
-            'user_id' => $user_id,
-            'post_id' => $post_id,
-            'orderby' => 'comment_ID',
-            'order' => 'DESC',
-        );
+        $sql = "SELECT * FROM wp_submit 
+                WHERE user_id = '$user_id'
+                AND post_id = '$post_id'
+                ORDER BY submit_id DESC ";
 
-        $comments = get_comments($args);
-        foreach ($comments as $value){
-            if ($value->comment_type === 'source_code') {
-                $array[] = new Source($value->comment_date, $value->pass, $value->comment_content);
-            }
+        $result = $wpdb->get_results($sql);
+        foreach ($result as $value){
+            $array[] = new Source($value->time, $value->pass, $value->source);
         }
 
         $hashMap = ['user_id' => $user_id, 'post_id' => $post_id, 'source' => $array];

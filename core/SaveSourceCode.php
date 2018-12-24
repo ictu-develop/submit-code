@@ -3,34 +3,45 @@
 class SaveSourceCode
 {
 
+    private function create($prefix)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS " . $prefix . "submit (
+                submit_id bigint PRIMARY KEY AUTO_INCREMENT,
+                post_id bigint(20) UNSIGNED	,
+                user_id bigint(20) UNSIGNED	,
+                author text,
+                user_email text,
+                source text,
+                pass text,
+                language text,
+                time datetime,
+                CONSTRAINT post_id FOREIGN KEY (post_id) REFERENCES wp_posts(ID),
+                CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES wp_users(ID)
+            )";
 
-    function save($comment_post_ID, $comment_author, $comment_author_email, $comment_content, $user_id, $pass){
-        $time = date( 'Y-m-d H:m:s');
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        var_dump(dbDelta($sql));
+    }
 
-        require '../../../../wp-load.php';
-        $selectTable = $wpdb->get_row("SELECT * FROM wp_comments");
+    function save($post_id, $author, $email, $source, $user_id, $pass)
+    {
+        require '../../../../wp-config.php';
+        $time = current_time('Y-m-d H:i:s');
 
-        if(!isset($selectTable->pass)){
-            $wpdb->query("ALTER TABLE wp_comments ADD pass TEXT");
-        }
+        global $wpdb;
+        $this->create($wpdb->prefix);
 
         $data = array(
-            'comment_post_ID' => $comment_post_ID,
-            'comment_author' => $comment_author,
-            'comment_author_email' => $comment_author_email,
-            'comment_author_url' => $comment_author_email,
-            'comment_content' => $comment_content,
-            'comment_type' => 'source_code',
-            'comment_parent' => 0,
+            'post_id' => $post_id,
             'user_id' => $user_id,
-            'comment_author_IP' => '::1',
-            'comment_agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)',
-            'comment_date' => $time,
-            'comment_approved' => 0,
+            'author' => $author,
+            'user_email' => $email,
+            'source' => $source,
+            'time' => $time,
             'pass' => $pass,
         );
 
-        $insert = $wpdb->insert('wp_comments', $data);
+        $insert = $wpdb->insert('wp_submit', $data);
 
         if ($insert != false)
             return true;
