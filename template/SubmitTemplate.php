@@ -6,13 +6,13 @@
  * Time: 5:01 PM
  */
 
-require 'collection/TestCase.php';
+require_once(ABSPATH . 'wp-content/plugins/submit-code/core/collection/TestCase.php');
 
 class SubmitTemplate
 {
     private $test_case_array = [];
     private $lang_id = [/*4 => 'C (gcc 7.2.0)',*/
-         15 => 'C/C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
+        15 => 'C/C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -105,34 +105,63 @@ class SubmitTemplate
 
             echo $content;
             if (is_single() && is_user_logged_in()) {
-                echo '<textarea id="code-editor" name="source" required></textarea>';
-                echo '<select name="lang_id" class="lang_id">';
-                foreach ($this->lang_id as $lang_id => $lang_name) {
-                    if ($_COOKIE['lang_id'] == $lang_id)
-                        echo '<option value="' . $lang_id . '" selected>' . $lang_name . '</option>';
-                    else
-                        echo '<option value="' . $lang_id . '">' . $lang_name . '</option>';
-                }
-                echo '</select>';
-                echo '<button onclick="submit_code()" class="submit-code-btn">Submit</button>';
-                echo '<p></p>';
-                echo '<div class="submit-result"></div>';
-                echo '<button class="button-show-submit-history" onclick="show_submit_history()">Show submit history</button>';
-                echo '<div class="submit-history-result"></div>';
+                $this->template();
+            } else {
+                $suggestLogin = '<p>Bạn chưa đăng nhập? <b><a style="color: #364956" href="' . get_site_url() . '/login">Đăng nhập </a></b>để Submit ngay!</p>';
+                return $suggestLogin;
+            }
+        });
+    }
 
-                echo '<script>
+    private function requestCheckApiLive()
+    {
+        echo '<script>
+                    $.ajax({
+                        method: "GET",
+                        url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestCheckApiLive.php",
+                    })
+                    .done(async function(data) {
+                        console.log(data);
+                        if (data.httpCode !== 200)
+                            alert("API is under maintenance, please come back later");
+                    })
+                    .fail(async function(jqXHR, textStatus, errorThrown) {
+                        alert("API is under maintenance, please come back later");
+                    });
+            </script>';
+    }
+
+    private function template()
+    {
+        $this->requestCheckApiLive();
+        echo '<textarea id="code-editor" name="source" required></textarea>';
+        echo '<select name="lang_id" class="lang_id">';
+        foreach ($this->lang_id as $lang_id => $lang_name) {
+            if ($_COOKIE['lang_id'] == $lang_id)
+                echo '<option value="' . $lang_id . '" selected>' . $lang_name . '</option>';
+            else
+                echo '<option value="' . $lang_id . '">' . $lang_name . '</option>';
+        }
+        echo '</select>';
+        echo '<button onclick="submit_code()" class="submit-code-btn">Submit</button>';
+        echo '<p></p>';
+        echo '<div class="submit-result"></div>';
+        echo '<button class="button-show-submit-history" onclick="show_submit_history()">Show submit history</button>';
+        echo '<div class="submit-history-result"></div>';
+
+        echo '<script>
                             let clicked = 0;
                             let clickShowSubmitHistory = 0;
                             let input = new Array();
                             let output = new Array();
                         </script>';
 
-                foreach ($this->test_case_array as $value) {
-                    echo '<script> input.push(' . $value->input . ') </script>';
-                    echo '<script> output.push(' . $value->output . ') </script>';
-                }
+        foreach ($this->test_case_array as $value) {
+            echo '<script> input.push(' . $value->input . ') </script>';
+            echo '<script> output.push(' . $value->output . ') </script>';
+        }
 
-                echo '<script>
+        echo '<script>
                     function b64DecodeUnicode(str) {
                         return decodeURIComponent(atob(str).split(\'\').map(function(c) {
                                 return \'%\' + (\'00\' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -147,7 +176,7 @@ class SubmitTemplate
                     }
                 </script>';
 
-                echo '<script>
+        echo '<script>
                     let myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
                                             lineNumbers: true,
                                             theme: "material"
@@ -240,7 +269,7 @@ class SubmitTemplate
                                           .fail(async function(jqXHR, textStatus, errorThrown) {
                                               err = 1;
                                               await $("#on-load-test").remove();
-                                              await $(".submit-result").append("<p class=wrong>Please check your internet</p>");
+                                              await $(".submit-result").append("<p class=wrong>Error connect</p>");
                                               await $(".submit-code-btn").text("Submit");
                                               clicked = 0;
                                           });
@@ -286,7 +315,7 @@ class SubmitTemplate
                         }
                     }
                 </script>';
-                echo '<script>
+        echo '<script>
                         async function show_submit_history() {
                             clickShowSubmitHistory++;
                             if (clickShowSubmitHistory %2 !== 0) {
@@ -330,7 +359,7 @@ class SubmitTemplate
                         }
                 </script>';
 
-                echo '<div id="myModal" class="modal">                    
+        echo '<div id="myModal" class="modal">                    
                             <div class="modal-content">
                                 <span class="close">&times;</span>
                                 <p class="history-result-pass"></p>
@@ -338,14 +367,14 @@ class SubmitTemplate
                             </div>
                     </div>';
 
-                echo '<script>
+        echo '<script>
                             let myCodeMirror2 = CodeMirror.fromTextArea(document.getElementsByClassName("history-result-source")[0], {
                                             lineNumbers: false,
                                             theme: "material"
                                        });
                     </script>';
 
-                echo '<script>
+        echo '<script>
                            async function show_code(obj) {
                                let tagPre = obj.getElementsByTagName("pre")[0];
                                let tagSpan = obj.getElementsByTagName("span")[0];
@@ -359,7 +388,7 @@ class SubmitTemplate
                     </script>';
 
 
-                echo '<script>
+        echo '<script>
                     let modal = document.getElementById("myModal");                
                     let btn = document.getElementById("myBtn");                    
                     let span = document.getElementsByClassName("close")[0];
@@ -376,11 +405,6 @@ class SubmitTemplate
                         }
                     }
                     </script>';
-            } else {
-                $suggestLogin = '<p>Bạn chưa đăng nhập? <b><a style="color: #364956" href="' . get_site_url() . '/login">Đăng nhập </a></b>để Submit ngay!</p>';
-                return $suggestLogin;
-            }
-        });
     }
 
 }
