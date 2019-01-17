@@ -123,10 +123,10 @@ class SubmitTemplate
                     .done(async function(data) {
                         console.log(data);
                         if (data.httpCode !== 200)
-                            alert("API is under maintenance, please come back later");
+                            await $(".submit-result").append("<p class=wrong>API is under maintenance, please come back later</p>");
                     })
                     .fail(async function(jqXHR, textStatus, errorThrown) {
-                        alert("API is under maintenance, please come back later");
+                        await $(".submit-result").append("<p class=wrong>API is under maintenance, please come back later</p>");
                     });
             </script>';
     }
