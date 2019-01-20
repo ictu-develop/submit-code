@@ -8,7 +8,7 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-class HttpCode{
+class HttpCodeResult{
     public $httpCode;
 }
 
@@ -17,6 +17,6 @@ require '../core/CheckApiLive.php';
 $request = new CheckApiLive();
 $httpCode = $request->isLive();
 
-$httpCodeObj = new HttpCode();
+$httpCodeObj = new HttpCodeResult();
 $httpCodeObj->httpCode = $httpCode;
 echo json_encode($httpCodeObj);
