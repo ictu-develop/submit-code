@@ -13,6 +13,8 @@ class SaveSourceCode
                 user_email text,
                 source text,
                 pass text,
+                total int,
+                correct int,
                 language text,
                 time datetime,
                 CONSTRAINT post_id FOREIGN KEY (post_id) REFERENCES wp_posts(ID),
@@ -31,6 +33,12 @@ class SaveSourceCode
         global $wpdb;
         $this->create($wpdb->prefix);
 
+        $total = strstr($pass, '/');
+        $total = trim($total, '/');
+
+        $correct = stristr($pass, '/', true);
+        $correct = trim($correct, '/');
+
         $data = array(
             'post_id' => $post_id,
             'user_id' => $user_id,
@@ -39,6 +47,8 @@ class SaveSourceCode
             'source' => $source,
             'time' => $time,
             'pass' => $pass,
+            'total' => $total,
+            'correct' => $correct,
             'language' => $lang
         );
 

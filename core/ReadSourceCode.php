@@ -25,9 +25,9 @@ class ReadSourceCode
         $result = $wpdb->get_results($sql);
         foreach ($result as $value) {
             if ($value->language !== null)
-                $array[] = new Source($value->time, $value->pass, $value->source, $value->language);
+                $array[] = new Source($value->time, $value->correct.'/'.$value->total, $value->source, $value->language);
             else
-                $array[] = new Source($value->time, $value->pass, $value->source, '');
+                $array[] = new Source($value->time, $value->correct.'/'.$value->total, $value->source, '');
         }
 
         $hashMap = ['user_id' => $user_id, 'post_id' => $post_id, 'source' => $array];
