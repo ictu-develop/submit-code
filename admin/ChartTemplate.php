@@ -36,27 +36,42 @@ class ChartTemplate
     function dashBroadInDay()
     {
         echo '<div class="row ">';
-            echo '<div class="col-4">';
-                echo '<nav class="navbar navbar-light bg-light mb-4">
+        echo '<div class="col-4">';
+        echo '<nav class="navbar navbar-light bg-light mb-4">
                   <span class="navbar-brand mb-0 h1 font-weight-bold">Today</span>';
-                echo '</nav>';
-                // Start content
-                echo '<p class="ml-3 text-center day-loading">Loading:</p>';
-                echo '<p class="font-weight-bold ml-3 visitor_submit">Visitor:</p>';
-                echo '<p class="font-weight-bold ml-3 correct">Correct:</p>';
-                echo '<p class="font-weight-bold ml-3 incorrect">Incorrect:</p>';
-                // End content
-            echo '</div>';
-            //
+        echo '</nav>';
+        // Start content
+        echo '<p class="ml-3 text-center day-loading">Loading:</p>';
+        echo '<p class="font-weight-bold ml-3 visitor_submit">Submit Total::</p>';
+        echo '<p class="font-weight-bold ml-3 correct">Correct:</p>';
+        echo '<p class="font-weight-bold ml-3 incorrect">Incorrect:</p>';
+        // End content
+        echo '</div>';
+        //
+        echo '<script>    
+                    function getDate() {
+                        let date = new Date();
+                        let d = date.getDate();
+                        let m = date.getMonth() + 1;
+                        let y = date.getFullYear();
+                        
+                        if (d.length < 2) 
+                            d = "0" + d; 
+                        if (m.length < 2) 
+                            m = "0" + m;
+                    
+                        return y+"-"+m+"-"+d;
+                    }
+                </script>';
         echo '<script>
             $.ajax({
                 method: "GET",
-                url: "'.get_site_url().'/wp-content/plugins/submit-code/admin/request/requestDashBoardInDay.php"
+                url: "'.get_site_url().'/wp-content/plugins/submit-code/admin/request/requestDashBoardInDay.php?date=" + getDate()
             })
             .done(async function(data) {
                 console.log(data);
                 $(".day-loading").hide();
-                $(".visitor_submit").text("Visitor submit: " + data.visitor_submit);
+                $(".visitor_submit").text("Submit Total: " + data.submit_total);
                 $(".correct").text("Correct: " + data.correct);
                 $(".incorrect").text("Incorrect: " + data.incorrect);
             })
@@ -73,7 +88,32 @@ class ChartTemplate
                   <span class="navbar-brand mb-0 h1 font-weight-bold">Last 7 day</span>';
             echo '</nav>';
             // Start content
-
+            $this->dashBroadChart();
+            echo '<script>
+                var x_bar = [];
+                var y_bar_visitor_submit = [];
+                var y_bar_date_correct = [];
+                var y_bar_date_incorrect = [];
+                
+                $.ajax({
+                    method: "GET",
+                    url: "'.get_site_url().'/wp-content/plugins/submit-code/admin/request/requestDashBoardInLast7Day.php"
+                })
+                .done(async function(data) {
+                    console.log(data);
+                    $(".day-loading").hide();
+                    for (let i=data.length  -1; i>=0 ; i--) {
+                        x_bar.push(data[i].date);
+                        y_bar_visitor_submit.push(data[i].submit_total);
+                        y_bar_date_correct.push(data[i].correct);
+                        y_bar_date_incorrect.push(data[i].incorrect);
+                    }
+                    last7DayChart()
+                })
+                .fail(async function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                });
+            </script>';
             // End content
         echo '</div>';
         echo '</div>';
@@ -81,36 +121,64 @@ class ChartTemplate
 
     function dashBroadChart()
     {
-        echo '<canvas id="dashboard-in-day-chart" width="50" height="10"></canvas>';
+        echo '<canvas id="dashboard-in-day-chart" width="50" height="15"></canvas>';
         echo '<script>
-            var ctx = document.getElementById("dashboard-in-day-chart");
-            
-            var myChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-                    datasets: [{
-                        label: "Personal today",
-                        data: [12, 19, 3, 5, 2, 3],
-                        backgroundColor: [
-                            "rgba(255, 99, 132, 0.2)"
-                        ],
-                        borderColor: [
-                            "rgba(255,99,132,1)"
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
+            function last7DayChart() {
+                var ctx = document.getElementById("dashboard-in-day-chart");
+                var color = Chart.helpers.color;
+                
+                var myChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: x_bar,
+                        datasets: [{
+                            label: "Submit last 7 day",
+                            data: y_bar_visitor_submit,
+                            fill: false,
+                            backgroundColor: [
+                                "rgba(0, 94, 255, 1)"
+                            ],
+                            borderColor: [
+                                "rgba(0, 94, 255, 1)"
+                            ],
+                            borderWidth: 0.5
+                        },
+                        {
+                            label: "Correct last 7 day",
+                            data: y_bar_date_correct,
+                            fill: false,
+                            backgroundColor: [
+                                "rgba(68, 255, 0, 1)"
+                            ],
+                            borderColor: [
+                                "rgba(68, 255, 0, 1)"
+                            ],
+                            borderWidth: 0.5
+                        },
+                        {
+                            label: "Incorrect last 7 day",
+                            data: y_bar_date_incorrect,
+                            fill: false,
+                            backgroundColor: [
+                                "rgba(255, 0, 0, 1)"
+                            ],
+                            borderColor: [
+                                "rgba(255, 0, 0, 1)"
+                            ],
+                            borderWidth: 0.5
                         }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
                     }
-                }
-            });
+                });
+            }
             </script>';
     }
 }

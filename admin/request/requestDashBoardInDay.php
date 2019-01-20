@@ -9,21 +9,24 @@
     header('Content-Type: application/json; charset=UTF-8');
 
 class DashBroadInDayResult{
-    public $visitor_submit;
+    public $submit_total;
     public $correct;
     public $incorrect;
 }
 
-require '../core/DashBoardInDay.php';
+if (isset($_GET['date'])) {
 
-require '../../../../../wp-config.php';
-$today = current_time('Y-m-d');
+    require '../core/DashBoardInDay.php';
+    require '../../../../../wp-config.php';
 
-$dashBoardInDay = new DashBoardInDay($today);
-$dashBroadInDayResult = new DashBroadInDayResult();
+    $date = $_GET['date'];
 
-$dashBroadInDayResult->visitor_submit = $dashBoardInDay->visitor_submit();
-$dashBroadInDayResult->correct = $dashBoardInDay->correct();
-$dashBroadInDayResult->incorrect = $dashBoardInDay->incorrect();
+    $dashBoardInDay = new DashBoardInDay($date);
+    $dashBroadInDayResult = new DashBroadInDayResult();
 
-echo json_encode($dashBroadInDayResult);
+    $dashBroadInDayResult->submit_total = $dashBoardInDay->submit_total();
+    $dashBroadInDayResult->correct = $dashBoardInDay->correct();
+    $dashBroadInDayResult->incorrect = $dashBoardInDay->incorrect();
+
+    echo json_encode($dashBroadInDayResult);
+}

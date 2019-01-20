@@ -23,7 +23,7 @@ class DashBoardInDay
     }
 
     // Return count
-    function visitor_submit()
+    function submit_total()
     {
         global $wpdb;
         $prefix = $wpdb->prefix;
