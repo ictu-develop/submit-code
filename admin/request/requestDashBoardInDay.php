@@ -12,6 +12,7 @@ class DashBroadInDayResult{
     public $submit_total;
     public $correct;
     public $incorrect;
+    public $visitor_submit;
 }
 
 if (isset($_GET['date'])) {
@@ -27,6 +28,7 @@ if (isset($_GET['date'])) {
     $dashBroadInDayResult->submit_total = $dashBoardInDay->submit_total();
     $dashBroadInDayResult->correct = $dashBoardInDay->correct();
     $dashBroadInDayResult->incorrect = $dashBoardInDay->incorrect();
+    $dashBroadInDayResult->visitor_submit = $dashBoardInDay->visitor_submit();
 
     echo json_encode($dashBroadInDayResult);
 }

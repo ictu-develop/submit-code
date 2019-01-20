@@ -8,12 +8,13 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-class DashBroadInDayResult
+class DashBroadLast7DayResult
 {
     public $date;
-    public $visitor_submit;
+    public $submit_total;
     public $correct;
     public $incorrect;
+    public $visitor_submit;
 }
 
 require '../core/DashBoardInDay.php';
@@ -26,12 +27,13 @@ $resutl = [];
 
 for ($i = 0; $i < 7; $i++) {
     $dashBoardInDay = new DashBoardInDay($date);
-    $dashBroadInDayResult = new DashBroadInDayResult();
+    $dashBroadInDayResult = new DashBroadLast7DayResult();
 
     $dashBroadInDayResult->date = $date;
     $dashBroadInDayResult->submit_total = $dashBoardInDay->submit_total();
     $dashBroadInDayResult->correct = $dashBoardInDay->correct();
     $dashBroadInDayResult->incorrect = $dashBoardInDay->incorrect();
+    $dashBroadInDayResult->visitor_submit = $dashBoardInDay->visitor_submit();
 
     $resutl[] = $dashBroadInDayResult;
 

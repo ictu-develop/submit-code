@@ -31,6 +31,8 @@ function admin_menu(){
 function init(){
     $chartTemplate = new ChartTemplate();
     $chartTemplate->title();
-    $chartTemplate->dashBroadInDay();
+    $chartTemplate->today();
     $chartTemplate->last7Day();
+    $chartTemplate->total();
+    $chartTemplate->top_post_submit();
 }

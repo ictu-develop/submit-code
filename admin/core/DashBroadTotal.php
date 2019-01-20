@@ -6,20 +6,12 @@
  * Time: 15:20
  */
 
-class DashBoardInDay
+class DashBroadTotal
 {
     private $date;
     private $day;
     private $month;
     private $year;
-
-    function __construct($date)
-    {
-        $this->date = date('Y-m-d', strtotime($date));
-        $this->day = date('d', strtotime($this->date));
-        $this->month = date('m', strtotime($this->date));
-        $this->year = date('Y', strtotime($this->date));
-    }
 
     // Return count
     function submit_total()
@@ -29,7 +21,7 @@ class DashBoardInDay
 
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."'";
+        $sql = "SELECT COUNT(*) FROM ".$prefix."submit";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -42,7 +34,7 @@ class DashBoardInDay
 
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' AND total = correct";
+        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE total = correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -55,7 +47,7 @@ class DashBoardInDay
 
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' AND total != correct";
+        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE total != correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -67,14 +59,12 @@ class DashBoardInDay
 
         $total = 0;
 
-        $ymd = "$this->year-$this->month-$this->day";
-
-        $sql = "SELECT user_id FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' GROUP BY user_id";
+        $sql = "SELECT user_id FROM ".$prefix."submit GROUP BY user_id";
         $result = $wpdb->get_results($sql);
 
         foreach ($result as $value)
-            $total++;
 
+            $total++;
         return $total;
     }
 
