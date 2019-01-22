@@ -26,7 +26,7 @@ $newResult = [];
 foreach ($result as $value) {
     $topPostResult = new TopPostResult();
 
-    $topPostResult->post_link = get_permalink($value->post_id, );
+    $topPostResult->post_link = get_permalink($value->post_id);
     $topPostResult->post_id = $value->post_id;
     $topPostResult->post_title = $value->post_title;
     $topPostResult->total = $value->total;
