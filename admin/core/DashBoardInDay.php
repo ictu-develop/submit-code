@@ -13,8 +13,13 @@ class DashBoardInDay
     private $month;
     private $year;
 
+    private $prefix;
+
     function __construct($date)
     {
+        global $wpdb;
+        $this->prefix = $wpdb->prefix;
+
         $this->date = date('Y-m-d', strtotime($date));
         $this->day = date('d', strtotime($this->date));
         $this->month = date('m', strtotime($this->date));
@@ -25,11 +30,9 @@ class DashBoardInDay
     function submit_total()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
-
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."'";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit WHERE DATE(time) = '".$ymd."'";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -38,11 +41,9 @@ class DashBoardInDay
     function correct()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
-
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' AND total = correct";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit WHERE DATE(time) = '".$ymd."' AND total = correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -51,25 +52,22 @@ class DashBoardInDay
     function incorrect()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
-
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' AND total != correct";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit WHERE DATE(time) = '".$ymd."' AND total != correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
 
     // Return count
-    function visitor_submit(){
+    function visitor_submit()
+    {
         global $wpdb;
-        $prefix = $wpdb->prefix;
-
         $total = 0;
 
         $ymd = "$this->year-$this->month-$this->day";
 
-        $sql = "SELECT user_id FROM ".$prefix."submit WHERE DATE(time) = '".$ymd."' GROUP BY user_id";
+        $sql = "SELECT user_id FROM ".$this->prefix."submit WHERE DATE(time) = '".$ymd."' GROUP BY user_id";
         $result = $wpdb->get_results($sql);
 
         foreach ($result as $value)

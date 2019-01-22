@@ -17,8 +17,8 @@ class DashBroadInDayResult{
 
 if (isset($_GET['date'])) {
 
-    require '../core/DashBoardInDay.php';
-    require '../../../../../wp-config.php';
+    require_once '../core/DashBoardInDay.php';
+    require_once '../../../../../wp-config.php';
 
     $date = $_GET['date'];
 

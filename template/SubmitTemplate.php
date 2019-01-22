@@ -119,6 +119,7 @@ class SubmitTemplate
                     $.ajax({
                         method: "GET",
                         url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestCheckApiLive.php",
+                        timeout: 10000,
                     })
                     .done(async function(data) {
                         console.log(data);

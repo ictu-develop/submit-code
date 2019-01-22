@@ -17,8 +17,8 @@ class DashBroadTotalResult
 }
 
 
-require '../core/DashBroadTotal.php';
-require '../../../../../wp-config.php';
+require_once '../core/DashBroadTotal.php';
+require_once '../../../../../wp-config.php';
 
 $date = $_GET['date'];
 

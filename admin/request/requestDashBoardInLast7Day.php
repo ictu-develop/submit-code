@@ -17,13 +17,13 @@ class DashBroadLast7DayResult
     public $visitor_submit;
 }
 
-require '../core/DashBoardInDay.php';
-require '../../../../../wp-config.php';
+require_once '../core/DashBoardInDay.php';
+require_once '../../../../../wp-config.php';
 
 $date = current_time('Y-m-d');
 $date = date('Y-m-d', strtotime($date));
 
-$resutl = [];
+$result = [];
 
 for ($i = 0; $i < 7; $i++) {
     $dashBoardInDay = new DashBoardInDay($date);
@@ -35,9 +35,9 @@ for ($i = 0; $i < 7; $i++) {
     $dashBroadInDayResult->incorrect = $dashBoardInDay->incorrect();
     $dashBroadInDayResult->visitor_submit = $dashBoardInDay->visitor_submit();
 
-    $resutl[] = $dashBroadInDayResult;
+    $result[] = $dashBroadInDayResult;
 
     $date = date('Y-m-d', strtotime($date.' - 1 days'));
 }
 
-echo json_encode($resutl);
+echo json_encode($result);

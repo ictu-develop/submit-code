@@ -8,20 +8,20 @@
 
 class DashBroadTotal
 {
-    private $date;
-    private $day;
-    private $month;
-    private $year;
+    private $prefix;
+
+    function __construct()
+    {
+        global $wpdb;
+        $this->prefix = $wpdb->prefix;
+    }
 
     // Return count
     function submit_total()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
 
-        $ymd = "$this->year-$this->month-$this->day";
-
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -30,11 +30,8 @@ class DashBroadTotal
     function correct()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
 
-        $ymd = "$this->year-$this->month-$this->day";
-
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE total = correct";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit WHERE total = correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
@@ -43,29 +40,39 @@ class DashBroadTotal
     function incorrect()
     {
         global $wpdb;
-        $prefix = $wpdb->prefix;
 
-        $ymd = "$this->year-$this->month-$this->day";
-
-        $sql = "SELECT COUNT(*) FROM ".$prefix."submit WHERE total != correct";
+        $sql = "SELECT COUNT(*) FROM ".$this->prefix."submit WHERE total != correct";
         $result = $wpdb->get_var($sql);
         return $result;
     }
 
     // Return count
-    function visitor_submit(){
+    function visitor_submit()
+    {
         global $wpdb;
-        $prefix = $wpdb->prefix;
-
         $total = 0;
 
-        $sql = "SELECT user_id FROM ".$prefix."submit GROUP BY user_id";
+        $sql = "SELECT user_id FROM ".$this->prefix."submit GROUP BY user_id";
         $result = $wpdb->get_results($sql);
 
         foreach ($result as $value)
-
             $total++;
+
         return $total;
+    }
+
+    function top_post()
+    {
+        global $wpdb;
+
+        $sql = "SELECT ".$this->prefix."submit.post_id, ".$this->prefix."posts.post_title, ".$this->prefix."posts.guid, COUNT(".$this->prefix."submit.post_id) as total 
+                FROM ".$this->prefix."submit, ".$this->prefix."posts 
+                WHERE ".$this->prefix."submit.post_id = ".$this->prefix."posts.ID 
+                GROUP BY ".$this->prefix."submit.post_id ORDER BY total DESC";
+
+        $result = $wpdb->get_results($sql);
+
+        return $result;
     }
 
 }

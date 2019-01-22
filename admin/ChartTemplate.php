@@ -21,6 +21,8 @@ class ChartTemplate
         echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>';
         echo '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>';
         echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>';
+
+        echo '<link rel="stylesheet" href="'.get_site_url().'/wp-content/plugins/submit-code/admin/style/style.css">';
     }
 
     function title()
@@ -87,9 +89,10 @@ class ChartTemplate
     {
         echo '<div class="col">';
         echo '<nav class="navbar navbar-light bg-light mb-4">
-                  <span class="navbar-brand mb-0 h1 font-weight-bold">Last 7 day</span>';
+                  <span class="navbar-brand mb-0 h1 font-weight-bold">Last 7 days</span>';
         echo '</nav>';
         // Start content
+        // End content
         $this->last7DayChart();
         echo '<script>
                 var x_bar = [];
@@ -118,7 +121,6 @@ class ChartTemplate
                     console.log(errorThrown);
                 });
             </script>';
-        // End content
         echo '</div>';
         echo '</div>';
     }
@@ -136,7 +138,7 @@ class ChartTemplate
                     data: {
                         labels: x_bar,
                         datasets: [{
-                            label: "Submit last 7 day",
+                            label: "Submit",
                             data: y_bar_total_submit,
                             fill: false,
                             backgroundColor: [
@@ -148,7 +150,7 @@ class ChartTemplate
                             borderWidth: 0.5
                         },
                         {
-                            label: "Correct last 7 day",
+                            label: "Correct",
                             data: y_bar_date_correct,
                             fill: false,
                             backgroundColor: [
@@ -160,7 +162,7 @@ class ChartTemplate
                             borderWidth: 0.5
                         },
                         {
-                            label: "Incorrect last 7 day",
+                            label: "Incorrect",
                             data: y_bar_date_incorrect,
                             fill: false,
                             backgroundColor: [
@@ -172,7 +174,7 @@ class ChartTemplate
                             borderWidth: 0.5
                         },
                         {
-                            label: "Visitor submit last 7 day",
+                            label: "Visitor",
                             data: y_bar_visitor_submit,
                             fill: false,
                             backgroundColor: [
@@ -233,14 +235,46 @@ class ChartTemplate
         </script>';
     }
 
-    function top_post_submit()
+    function top_post()
     {
         echo '<div class="col">';
         echo '<nav class="navbar navbar-light bg-light mb-4">
                   <span class="navbar-brand mb-0 h1 font-weight-bold">Top post</span>';
         echo '</nav>';
         // Start content
+        echo '<div class="row h-50">';
+        echo '<div class="col top_post_content">';
+        echo '<table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Post title</th>
+                      <th scope="col">Submit</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbody">
+                  </tbody>      
+              </table>';
+        echo '</div>';
+        echo '</div>';
         // End content
+        echo '<script>
+            let post_index= 0;
+            $.ajax({
+                method: "GET",
+                url: "' . get_site_url() . '/wp-content/plugins/submit-code/admin/request/requestTopPost.php"
+            })
+            .done(async function(data) {
+                console.log(data);
+                for (let i=0; i<data.length; i++) {
+                    $(".tbody").append("<tr><td>" + post_index + "</td><td><a href=" + data[i].guid + "  target=_blank>" + data[i].post_title + "</a></td><td>" + data[i].total + "</td></tr>");
+                    post_index++;
+                } 
+            })
+            .fail(async function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+        </script>';
         echo '</div>';
         echo '</div>';
     }

@@ -11,8 +11,9 @@
  * GitHub Plugin URI:
  */
 
-require 'template/SubmitTemplate.php';
-require 'admin/ChartTemplate.php';
+require_once 'template/SubmitTemplate.php';
+require_once 'admin/ChartTemplate.php';
+require_once 'widget/TopCodeWidget.php';
 
 // User template
 $submit = new SubmitTemplate();
@@ -34,5 +35,5 @@ function init(){
     $chartTemplate->today();
     $chartTemplate->last7Day();
     $chartTemplate->total();
-    $chartTemplate->top_post_submit();
+    $chartTemplate->top_post();
 }
