@@ -267,7 +267,7 @@ class ChartTemplate
             .done(async function(data) {
                 console.log(data);
                 for (let i=0; i<data.length; i++) {
-                    $(".tbody").append("<tr><td>" + post_index + "</td><td><a href=" + data[i].guid + "  target=_blank>" + data[i].post_title + "</a></td><td>" + data[i].total + "</td></tr>");
+                    $(".tbody").append("<tr><td>" + post_index + "</td><td><a href=" + data[i].post_link + "  target=_blank>" + data[i].post_title + "</a></td><td>" + data[i].total + "</td></tr>");
                     post_index++;
                 } 
             })

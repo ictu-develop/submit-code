@@ -65,7 +65,7 @@ class DashBroadTotal
     {
         global $wpdb;
 
-        $sql = "SELECT ".$this->prefix."submit.post_id, ".$this->prefix."posts.post_title, ".$this->prefix."posts.guid, COUNT(".$this->prefix."submit.post_id) as total 
+        $sql = "SELECT ".$this->prefix."submit.post_id, ".$this->prefix."posts.post_title, COUNT(".$this->prefix."submit.post_id) as total 
                 FROM ".$this->prefix."submit, ".$this->prefix."posts 
                 WHERE ".$this->prefix."submit.post_id = ".$this->prefix."posts.ID 
                 GROUP BY ".$this->prefix."submit.post_id ORDER BY total DESC";
