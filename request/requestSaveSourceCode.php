@@ -36,6 +36,16 @@ if (isset($_POST['post_id']) && $_POST['author']
                 $lang = 'C/C++';
                 break;
             }
+        case 16:
+            {
+                $lang = 'C#';
+                break;
+            }
+        case 34:
+            {
+                $lang = 'Python';
+                break;
+            }
         default:
             {
                 break;
