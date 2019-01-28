@@ -1,12 +1,14 @@
 <h3>Submit Code Plugin</h3>
-Version: 1.0.5
+Version: 1.0.6
 <br>
 Platform: Wordpress
 <br>
 Support:
 <ul>
   <li>C/C++</li>
+  <li>C#</li>
   <li>Java</li>
+  <li>Python</li>
 </ul>
 <h4>How to write test case</h4>
 
