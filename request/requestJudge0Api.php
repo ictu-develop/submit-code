@@ -13,6 +13,7 @@
  * lang_id: 15 (C++ - g++ 4.8.5)
  * lang_id: 22 (Go -1.9)
  * lang_id: 34 (Python - 3.6.0)
+ * lang_id: 16 (C# (mono 5.4.0.167))
  *
  * */
 
@@ -24,7 +25,7 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
     $stdin = $_POST['stdin'];
     $expected_output = $_POST['expected_output'];
     $source = $_POST['source'];
-    $lang_id = (int) $_POST['lang_id'];
+    $lang_id = (int)$_POST['lang_id'];
     $cpu_time_limit = 5; // default is 2 second
 
     switch ($lang_id) {
@@ -34,10 +35,22 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
             }
-        case 15:{
-            setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
-            break;
-        }
+        case 16:
+            {
+                $cpu_time_limit = 10;
+                setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
+                break;
+            }
+        case 15:
+            {
+                setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
+                break;
+            }
+        case 34:
+            {
+                setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
+                break;
+            }
         default:
             {
                 $cpu_time_limit = 5;

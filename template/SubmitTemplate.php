@@ -11,8 +11,7 @@ require_once(ABSPATH . 'wp-content/plugins/submit-code/core/collection/TestCase.
 class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = [/*4 => 'C (gcc 7.2.0)',*/
-        15 => 'C/C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)'/*, 22 => 'Go (1.9)', 34 => 'Python (3.6.0)'*/];
+    private $lang_id = [15 => 'C/C++ (g++ 4.8.5)', 26 => 'Java (JDK 9)', 34 => 'Python (3.6.0)', 16 => 'C# (mono 5.4.0.167)'];
     private $all_test_case = '';
 
     private function customTrim($input)
