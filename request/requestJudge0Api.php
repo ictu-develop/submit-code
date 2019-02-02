@@ -19,7 +19,7 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-require '../core/Judge0Api.php';
+require '../core/Submissions.php';
 require '../core/GetToken.php';
 
 if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source'] && $_POST['lang_id']) {
@@ -64,6 +64,6 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
 
     sleep(2);
 
-    $requestJudgeApi = new Judge0Api();
-    echo $requestJudgeApi->submissions($token);
+    $requestSubmissions = new Submissions();
+    echo $requestSubmissions->submit($token);
 }
