@@ -17,8 +17,8 @@ class SaveSourceCode
                 correct int,
                 language text,
                 time datetime,
-                CONSTRAINT post_id FOREIGN KEY (post_id) REFERENCES wp_posts(ID),
-                CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES wp_users(ID)
+                CONSTRAINT post_id FOREIGN KEY (post_id) REFERENCES " . $prefix . "posts(ID),
+                CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES " . $prefix . "wp_users(ID)
             )";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
