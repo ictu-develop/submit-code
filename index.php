@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Submit Code
  * Description:       Submit your code (I'm Tester)
- * Version:           1.0.6
+ * Version:           1.0.7
  * Author:            IndieTeam
  * Author URI:
  * Text Domain:
