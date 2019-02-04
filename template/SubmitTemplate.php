@@ -227,33 +227,34 @@ class SubmitTemplate
                                                                                             
                                               let json = await JSON.stringify(data);
                                               let dataJson = await JSON.parse(json);
-                                                                                                                                                              
+                                                                                 
                                               let description = dataJson.status.description;
+                                              let status_id = dataJson.status.id;
                                               let expected_output = output[i];
                                                                                            
-                                              if (description === "Compilation Error" || description === "Runtime Error (NZEC)"){
+                                              if (status_id === 6 || status_id === 11){
                                                     err = 1;      
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
-                                                    if (description === "Compilation Error") {
+                                                    if (status_id === 6) {
                                                         let complite_output = b64DecodeUnicode(dataJson.compile_output);
                                                         await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
                                                     } else {
                                                         let stderr = b64DecodeUnicode(dataJson.stderr);
                                                         await $(".submit-result").append("<p class=compilation_error>"+stderr +"</p>");
                                                     }
-                                              } else if (description !== "Accepted" && description !== "Wrong Answer" && description !== "Internal Error"){
+                                              } else if (status_id !== 3 && status_id !== 4 && status_id !== 13){
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
                                               }                    
                                                   
-                                              if (description === "Accepted") {
+                                              if (status_id === 3) {
                                                     pass++;
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=accepted>"+count_unit_test+". "+ description +"</p>");                              
                                               }
                                               
-                                              if (description === "Wrong Answer"){
+                                              if (status_id === 4){
                                                     let your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
                                                     console.log(your_ouput)
                                                     await $("#on-load-test").remove();
@@ -264,10 +265,10 @@ class SubmitTemplate
                                                                                     "<span class=result-title>Your Output:</span>\n"+your_ouput+"</pre>");
                                               }
                                               
-                                              if (description === "Internal Error"){
+                                              if (status_id === 13){
                                                     let your_ouput = null
                                                     console.log(your_ouput)
-                                                    await $("#on-load-test").remove();
+                                                    await $("#on-load-test")    .remove();
                                                     await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +" (No Output)</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
                                                                                     ""+input[i] +"\n" +
