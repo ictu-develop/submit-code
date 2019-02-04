@@ -205,9 +205,8 @@ class SubmitTemplate
                             await $( ".submit-result" ).empty();
                             if (source_code.trim() !== ""){
                                 for (let i=0; i< input.length; i++){
-                                    if (err === 1){
+                                    if (err === 1)
                                         break;
-                                    }
                                     
                                     await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
                                     //await requestApi(b64EncodeUnicode(source_code), b64EncodeUnicode(input[i]), b64EncodeUnicode(output[i]), lang_id);
