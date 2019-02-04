@@ -183,22 +183,51 @@ class SubmitTemplate
                                           });
                     
                     async function requestApi(source_code, input, output, lang_id) {
-                        await $.ajax({
+                        
+                    }
+                    
+                    async function submit_code() {
+                        let source_code = myCodeMirror.getValue()
+                        if (source_code.trim() !== "")
+                            clicked++;
+                        
+                        let count_unit_test = 1;
+                        let total = input.length;
+                        let pass = 0;
+                        let err = 0;
+                        
+                        await $(".submit-code-btn").css("color: while")
+                        let lang_id = await $(".lang_id").find(":selected").val();
+                        
+                        if (clicked === 1) {
+                            await $(".submit-code-btn").text("Wait...");
+
+                            await $( ".submit-result" ).empty();
+                            if (source_code.trim() !== ""){
+                                for (let i=0; i< input.length; i++){
+                                    if (err === 1){
+                                        break;
+                                    }
+                                    
+                                    await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
+                                    //await requestApi(b64EncodeUnicode(source_code), b64EncodeUnicode(input[i]), b64EncodeUnicode(output[i]), lang_id);
+                                 
+                                    await $.ajax({
                                               method: "POST",
                                               url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api.php",
                                               data: {
-                                                  source: source_code,
-                                                  stdin: input,
-                                                  expected_output: output,
+                                                  source: b64EncodeUnicode(source_code),
+                                                  stdin: b64EncodeUnicode(input[i]),
+                                                  expected_output: b64EncodeUnicode(output[i]),
                                                   lang_id: lang_id
                                                }
                                             })
                                           .done(async function(data) {
+                                              console.log(data);
+                                                                                            
                                               let json = await JSON.stringify(data);
                                               let dataJson = await JSON.parse(json);
-                                                                  
-                                              console.log(dataJson);
-                                                                                            
+                                                                                                                                                              
                                               let description = dataJson.status.description;
                                               let expected_output = output[i];
                                                                                            
@@ -254,34 +283,7 @@ class SubmitTemplate
                                               await $(".submit-code-btn").text("Submit");
                                               clicked = 0;
                                           });
-                    }
-                    
-                    async function submit_code() {
-                        let source_code = myCodeMirror.getValue()
-                        if (source_code.trim() !== "")
-                            clicked++;
-                        
-                        let count_unit_test = 1;
-                        let total = input.length;
-                        let pass = 0;
-                        let err = 0;
-                        
-                        await $(".submit-code-btn").css("color: while")
-                        let lang_id = await $(".lang_id").find(":selected").val();
-                        
-                        if (clicked === 1) {
-                            await $(".submit-code-btn").text("Wait...");
-
-                            await $( ".submit-result" ).empty();
-                            if (source_code.trim() !== ""){
-                                for (let i=0; i< input.length; i++){
-                                    if (err === 1){
-                                        break;
-                                    }
                                     
-                                    await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
-                                    await requestApi(b64EncodeUnicode(source_code), b64EncodeUnicode(input[i]), b64EncodeUnicode(output[i]), lang_id);
-                                 
                                     count_unit_test++;
                                 }
                                 

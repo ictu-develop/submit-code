@@ -62,8 +62,21 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
     $requestToken = new GetToken();
     $token = $requestToken->get($source, $stdin, $expected_output, $lang_id, $cpu_time_limit);
 
-    sleep(2);
-
     $requestSubmissions = new Submissions();
-    echo $requestSubmissions->submit($token);
+    $result = $requestSubmissions->submit($token);
+    $resultJson = json_decode($result);
+
+    $index = 0;
+
+    while ($index <= 20) {
+        if ($resultJson->status->id == 2 || $resultJson->status->id == 1) {
+            $result = $requestSubmissions->submit($token);
+            $resultJson = json_decode($result);
+        } else
+            break;
+
+        $index++;
+    }
+
+    echo $result;
 }
