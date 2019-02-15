@@ -8,7 +8,9 @@ Support:
   <li>C/C++</li>
   <li>C#</li>
   <li>Java</li>
+  <li>Javascript</li>
   <li>Python</li>
+  <li>Passcal</li>
 </ul>
 <h4>How to write test case</h4>
 

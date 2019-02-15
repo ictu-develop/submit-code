@@ -47,6 +47,16 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
                 break;
             }
+        case 30:
+            {
+                setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
+                break;
+            }
+        case 33:
+            {
+                setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
+                break;
+            }
         case 34:
             {
                 setcookie('lang_id', $lang_id, time() + 86400 * 365, '/');
@@ -68,10 +78,11 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
 
     $index = 0;
 
-    while ($index <= 20) {
+    while ($index <= 21) {
         if ($resultJson->status->id == 2 || $resultJson->status->id == 1) {
             $result = $requestSubmissions->submit($token);
             $resultJson = json_decode($result);
+            sleep(0.5);
         } else
             break;
 

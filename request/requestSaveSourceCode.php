@@ -7,6 +7,8 @@
  * lang_id: 15 (C++ - g++ 4.8.5)
  * lang_id: 22 (Go -1.9)
  * lang_id: 34 (Python - 3.6.0)
+ * lang_id: 30 (JavaScript (nodejs 7.10.1))
+ * lang_id: 33 (Pascal (fpc 3.0.0))
  *
  * */
 
@@ -39,6 +41,16 @@ if (isset($_POST['post_id']) && $_POST['author']
         case 16:
             {
                 $lang = 'C#';
+                break;
+            }
+        case 30:
+            {
+                $lang = 'JavaScript';
+                break;
+            }
+        case 33:
+            {
+                $lang = 'Pascal';
                 break;
             }
         case 34:

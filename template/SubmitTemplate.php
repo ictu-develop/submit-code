@@ -11,7 +11,7 @@ require_once(ABSPATH . 'wp-content/plugins/submit-code/core/collection/TestCase.
 class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = [15 => 'C/C++ (g++ 4.8.5)', 16 => 'C# (mono 5.4.0.167)', 26 => 'Java (JDK 9)', 34 => 'Python (3.6.0)'];
+    private $lang_id = [15 => 'C/C++ (g++ 4.8.5)', 16 => 'C# (mono 5.4.0.167)', 26 => 'Java (JDK 9)', 30 => 'JavaScript (nodejs 8.5.0)',34 => 'Python (3.6.0)', 33 => 'Pascal (fpc 3.0.0)'];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -230,6 +230,8 @@ class SubmitTemplate
                                               let description = dataJson.status.description;
                                               let status_id = dataJson.status.id;
                                               let expected_output = output[i];
+                                              
+                                              console.log("status_id: " + status_id)
                                                                                            
                                               if (status_id === 6 || status_id === 11){
                                                     err = 1;      
@@ -254,8 +256,13 @@ class SubmitTemplate
                                               }
                                               
                                               if (status_id === 4){
-                                                    let your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
-                                                    console.log(your_ouput)
+                                                  let your_ouput = "";
+                                                    if (dataJson.stdout !== null)
+                                                        your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
+                                                    else 
+                                                        your_ouput = "";
+                                                    
+                                                    console.log("Your output: " + your_ouput);
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +"</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
