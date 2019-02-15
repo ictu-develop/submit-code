@@ -177,15 +177,26 @@ class SubmitTemplate
                 </script>';
 
         echo '<script>
+                    const In_Queue = 1;
+                    const Processing = 2;
+                    const Accepted = 3;
+                    const Wrong_Answer = 4;
+                    const Time_Limit_Exceeded = 5;
+                    const Compilation_Error = 6;
+                    const Runtime_Error_SIGSEGV_ = 7;
+                    const Runtime_Error_SIGXFSZ = 8;
+                    const Runtime_Error_SIGFPE = 9;
+                    const Runtime_Error_SIGABRT = 10;
+                    const Runtime_Error_NZEC = 11;
+                    const Runtime_Error_Other = 12;
+                    const Internal_Error = 13;
+                    
+                    
                     let myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
                                             lineNumbers: true,
                                             theme: "material"
                                           });
-                    
-                    async function requestApi(source_code, input, output, lang_id) {
-                        
-                    }
-                    
+                                        
                     async function submit_code() {
                         let source_code = myCodeMirror.getValue()
                         if (source_code.trim() !== "")
@@ -209,7 +220,6 @@ class SubmitTemplate
                                         break;
                                     
                                     await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
-                                    //await requestApi(b64EncodeUnicode(source_code), b64EncodeUnicode(input[i]), b64EncodeUnicode(output[i]), lang_id);
                                  
                                     await $.ajax({
                                               method: "POST",
@@ -233,29 +243,32 @@ class SubmitTemplate
                                               
                                               console.log("status_id: " + status_id)
                                                                                            
-                                              if (status_id === 6 || status_id === 11){
+                                              if (status_id === Compilation_Error || status_id === Runtime_Error_NZEC 
+                                              || status_id === Runtime_Error_SIGSEGV_ || status_id === Runtime_Error_SIGXFSZ
+                                              || status_id === Runtime_Error_SIGFPE || status_id === Runtime_Error_SIGABRT
+                                              || status_id === Runtime_Error_Other){
                                                     err = 1;      
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
-                                                    if (status_id === 6) {
+                                                    if (status_id === Compilation_Error) {
                                                         let complite_output = b64DecodeUnicode(dataJson.compile_output);
                                                         await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
                                                     } else {
                                                         let stderr = b64DecodeUnicode(dataJson.stderr);
                                                         await $(".submit-result").append("<p class=compilation_error>"+stderr +"</p>");
                                                     }
-                                              } else if (status_id !== 3 && status_id !== 4 && status_id !== 13){
+                                              } else if (status_id !== Accepted && status_id !== Wrong_Answer && status_id !== Internal_Error){
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
                                               }                    
                                                   
-                                              if (status_id === 3) {
+                                              if (status_id === Accepted) {
                                                     pass++;
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=accepted>"+count_unit_test+". "+ description +"</p>");                              
                                               }
                                               
-                                              if (status_id === 4){
+                                              if (status_id === Wrong_Answer){
                                                   let your_ouput = "";
                                                     if (dataJson.stdout !== null)
                                                         your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
@@ -271,7 +284,7 @@ class SubmitTemplate
                                                                                     "<span class=result-title>Your Output:</span>\n"+your_ouput+"</pre>");
                                               }
                                               
-                                              if (status_id === 13){
+                                              if (status_id === Internal_Error){
                                                     let your_ouput = null
                                                     console.log(your_ouput)
                                                     await $("#on-load-test")    .remove();

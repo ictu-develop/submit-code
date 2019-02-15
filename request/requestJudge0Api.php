@@ -22,6 +22,20 @@ header('Content-Type: application/json; charset=UTF-8');
 require '../core/Submissions.php';
 require '../core/GetToken.php';
 
+const In_Queue = 1;
+const Processing = 2;
+const Accepted = 3;
+const Wrong_Answer = 4;
+const Time_Limit_Exceeded = 5;
+const Compilation_Error = 6;
+const Runtime_Error_SIGSEGV_ = 7;
+const Runtime_Error_SIGXFSZ = 8;
+const Runtime_Error_SIGFPE = 9;
+const Runtime_Error_SIGABRT = 10;
+const Runtime_Error_NZEC = 11;
+const Runtime_Error_Other = 12;
+const Internal_Error = 13;
+
 if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source'] && $_POST['lang_id']) {
     $stdin = $_POST['stdin'];
     $expected_output = $_POST['expected_output'];
@@ -79,7 +93,7 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
     $index = 0;
 
     while ($index <= 21) {
-        if ($resultJson->status->id == 2 || $resultJson->status->id == 1) {
+        if ($resultJson->status->id == Processing || $resultJson->status->id == In_Queue) {
             $result = $requestSubmissions->submit($token);
             $resultJson = json_decode($result);
             sleep(0.5);
