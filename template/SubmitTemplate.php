@@ -11,7 +11,7 @@ require_once(ABSPATH . 'wp-content/plugins/submit-code/core/collection/TestCase.
 class SubmitTemplate
 {
     private $test_case_array = [];
-    private $lang_id = [15 => 'C/C++ (g++ 4.8.5)', 16 => 'C# (mono 5.4.0.167)', 26 => 'Java (JDK 9)', 30 => 'JavaScript (nodejs 8.5.0)',34 => 'Python (3.6.0)', 33 => 'Pascal (fpc 3.0.0)'];
+    private $lang_id = [15 => 'C/C++ (g++ 4.8.5)', 16 => 'C# (mono 5.4.0.167)', 26 => 'Java (JDK 9)', 30 => 'JavaScript (nodejs 8.5.0)', 34 => 'Python (3.6.0)', 33 => 'Pascal (fpc 3.0.0)'];
     private $all_test_case = '';
 
     private function customTrim($input)
@@ -196,6 +196,14 @@ class SubmitTemplate
                                             lineNumbers: true,
                                             theme: "material"
                                           });
+                    
+                    function anti(input) {
+                        let output = input;
+                        output = output.replace(/</g, "");
+                        output = output.replace(/>/g, "");
+                        output = output.replace(/script/g, "");   
+                        return output;
+                    }
                                         
                     async function submit_code() {
                         let source_code = myCodeMirror.getValue()
@@ -249,23 +257,23 @@ class SubmitTemplate
                                               || status_id === Runtime_Error_Other){
                                                     err = 1;      
                                                     await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
+                                                    await $(".submit-result").append("<p class=wrong>" + description + "</p>");
                                                     if (status_id === Compilation_Error) {
                                                         let complite_output = b64DecodeUnicode(dataJson.compile_output);
-                                                        await $(".submit-result").append("<p class=compilation_error>"+complite_output +"</p>");
+                                                        await $(".submit-result").append("<p class=compilation_error>" + anti(complite_output) + "</p>");
                                                     } else {
                                                         let stderr = b64DecodeUnicode(dataJson.stderr);
-                                                        await $(".submit-result").append("<p class=compilation_error>"+stderr +"</p>");
+                                                        await $(".submit-result").append("<p class=compilation_error>" + stderr + "</p>");
                                                     }
                                               } else if (status_id !== Accepted && status_id !== Wrong_Answer && status_id !== Internal_Error){
                                                     await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>"+ description +"</p>");
+                                                    await $(".submit-result").append("<p class=wrong>" + description + "</p>");
                                               }                    
                                                   
                                               if (status_id === Accepted) {
                                                     pass++;
                                                     await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=accepted>"+count_unit_test+". "+ description +"</p>");                              
+                                                    await $(".submit-result").append("<p class=accepted>"+count_unit_test+". " + description + "</p>");                              
                                               }
                                               
                                               if (status_id === Wrong_Answer){
@@ -275,28 +283,24 @@ class SubmitTemplate
                                                     else 
                                                         your_ouput = "";
                                                     
-                                                    your_ouput = your_ouput.replace(/</g, "");
-                                                    your_ouput = your_ouput.replace(/>/g, "");
-                                                    your_ouput = your_ouput.replace(/script/g, "");                                                    
-                                                    
                                                     console.log("Your output: " + your_ouput);
                                                     await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +"</p>");
+                                                    await $(".submit-result").append("<p class=wrong>" + count_unit_test + ". "+ description +"</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
-                                                                                    ""+input[i] +"\n" +
-                                                                                    "<span class=result-title>Test Output:</span>\n"+expected_output+"\n" +
-                                                                                    "<span class=result-title>Your Output:<code></span>\n"+your_ouput+"</pre></code>");
+                                                                                    "" + input[i] + "\n" +
+                                                                                    "<span class=result-title>Test Output:</span>\n" + expected_output + "\n" +
+                                                                                    "<span class=result-title>Your Output:<code></span>\n" + anti(your_ouput) + "</pre></code>");
                                               }
                                               
                                               if (status_id === Internal_Error){
                                                     let your_ouput = null
                                                     console.log(your_ouput)
                                                     await $("#on-load-test")    .remove();
-                                                    await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +" (No Output)</p>");
+                                                    await $(".submit-result").append("<p class=wrong>"+count_unit_test+". " + description + " (No Output)</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
-                                                                                    ""+input[i] +"\n" +
-                                                                                    "<span class=result-title>Test Output:</span>\n"+expected_output+"\n" +
-                                                                                    "<span class=result-title>Your Output:</span>\n"+your_ouput+"</pre>");
+                                                                                    "" + input[i] + "\n" +
+                                                                                    "<span class=result-title>Test Output:</span>\n"+ expected_output + "\n" +
+                                                                                    "<span class=result-title>Your Output:</span>\n" + anti(your_ouput) + "</pre>");
                                               } 
                                               
                                           })
@@ -314,9 +318,9 @@ class SubmitTemplate
                                 await $(".submit-result").append("<br><br>");
                                 
                                 if (pass === total)
-                                    await $(".submit-result").append("<h4 class=accepted> Passed: "+pass+"/"+total+"</h4>");
+                                    await $(".submit-result").append("<h4 class=accepted> Passed: " + pass + "/" + total + "</h4>");
                                 else
-                                    await $(".submit-result").append("<h4 class=Wrong> Passed: "+pass+"/"+total+"</h4>");
+                                    await $(".submit-result").append("<h4 class=Wrong> Passed: " + pass + "/" + total + "</h4>");
                                 
                                 await $.ajax({
                                     method: "POST",
@@ -368,10 +372,10 @@ class SubmitTemplate
                                 .done(async function(data) {
                                      console.log(data);
                                      for (let i=0; i<data.source.length; i++) { 
-                                          let total = data.source[i].pass.substring(data.source[i].pass.indexOf("/")+1);
+                                          let total = data.source[i].pass.substring(data.source[i].pass.indexOf("/") + 1);
                                           let pass = data.source[i].pass.substring(0, data.source[i].pass.length - total.length - 1);
                                           console.log("pass: " + pass + "/" + total);
-                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-"+i+">#"+(data.source.length-i)+". "+data.source[i].date+". <span> Pass: "+data.source[i].pass+" ("+data.source[i].lang+")</span></p>");
+                                          await $(".submit-history-result").append("<p onclick=show_code(this) class=submit-history-result-date id=submit-history-result-date-" + i + ">#" + (data.source.length-i) + ". " + data.source[i].date + ". <span> Pass: " + data.source[i].pass + " (" + data.source[i].lang + ")</span></p>");
 
                                           if (pass === total) {
                                                 $("#submit-history-result-date-"+i).css("color", "green");
