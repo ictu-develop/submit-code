@@ -275,13 +275,17 @@ class SubmitTemplate
                                                     else 
                                                         your_ouput = "";
                                                     
+                                                    your_ouput = your_ouput.replace(/</g, "");
+                                                    your_ouput = your_ouput.replace(/>/g, "");
+                                                    your_ouput = your_ouput.replace(/script/g, "");                                                    
+                                                    
                                                     console.log("Your output: " + your_ouput);
                                                     await $("#on-load-test").remove();
                                                     await $(".submit-result").append("<p class=wrong>"+count_unit_test+". "+ description +"</p>");
                                                     await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
                                                                                     ""+input[i] +"\n" +
                                                                                     "<span class=result-title>Test Output:</span>\n"+expected_output+"\n" +
-                                                                                    "<span class=result-title>Your Output:</span>\n"+your_ouput+"</pre>");
+                                                                                    "<span class=result-title>Your Output:<code></span>\n"+your_ouput+"</pre></code>");
                                               }
                                               
                                               if (status_id === Internal_Error){
