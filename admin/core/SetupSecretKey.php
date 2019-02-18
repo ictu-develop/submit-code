@@ -41,14 +41,22 @@ class SetupSecretKey
         $this->create($prefix);
         $isExits = $this->isExits();
 
+        $key = trim($key);
+
         $data = null;
         $result = null;
 
         if ($isExits) {
-            $data = array(
-                'key_content' => $key
-            );
-            $result = $wpdb->update($prefix . 'secret_key', $data, null);
+            require_once 'GetSecretKey.php';
+            $getSecretKey = new GetSecretKey();
+            $secretKey = $getSecretKey->get();
+
+            if ($key == $secretKey)
+                return true;
+
+            $sql = "UPDATE " . $prefix . "secret_key SET key_content = '$key'";
+            echo $sql;
+            $result = $wpdb->query($sql);
         } else {
             $data = array(
                 'key_content' => $key

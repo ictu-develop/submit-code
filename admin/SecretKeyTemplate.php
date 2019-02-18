@@ -27,16 +27,25 @@ class SecretKeyTemplate
 
     function form()
     {
+        require_once 'core/GetSecretKey.php';
+        $getSecretKey = new GetSecretKey();
+        $secretKey = $getSecretKey->get();
+
         echo '<div class="row">';
         echo '<div class="col-4">';
         echo '<nav class="navbar navbar-light bg-light mb-4">
                   <span class="navbar-brand mb-0 h1 font-weight-bold">Setup secret key</span>';
         echo '</nav>';
         // Start content
-        echo '<form>
-              <div class="form-group">
-                <textarea type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter secret key" required></textarea>
-                <small id="emailHelp" class="form-text text-muted">Never share your secret key with anyone else.</small>
+        echo '<form method="post" action="' . get_site_url() . '/wp-content/plugins/submit-code/admin/request/requestSetupSecretKey.php">
+              <div class="form-group">';
+
+        if ($secretKey != null)
+            echo '<textarea name="key" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter secret key" required>' . $secretKey . '</textarea>';
+        else
+            echo '<textarea name="key" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter secret key" required></textarea>';
+
+        echo '<small id="emailHelp" class="form-text text-muted">Never share your secret key with anyone else.</small>
               </div>
               
               <button type="submit" class="btn btn-primary">Save</button>

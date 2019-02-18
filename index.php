@@ -28,9 +28,9 @@ add_action('admin_menu', 'admin_menu');
 
 function admin_menu()
 {
-    add_menu_page('Submit Code', 'Submit Code', 'manage_options', 'submit-code', 'dashBroad');
-    add_submenu_page( 'submit-code', 'DashBroad', 'DashBroad', 'manage_options', 'submit-code', 'dashBroad' );
-    add_submenu_page( 'submit-code', 'Secret key', 'Secret key', 'manage_options', 'submenu2_slug', 'secretKey' );
+    add_menu_page('Submit Code', 'Submit Code', 'manage_options', 'submit-code-dashbroad', 'dashBroad');
+    add_submenu_page( 'submit-code-dashbroad', 'DashBroad', 'DashBroad', 'manage_options', 'submit-code-dashbroad', 'dashBroad' );
+    add_submenu_page( 'submit-code-dashbroad', 'Secret key', 'Secret key', 'manage_options', 'submit-code-secret_key', 'secretKey' );
 }
 
 function dashBroad()
