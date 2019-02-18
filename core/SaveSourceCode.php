@@ -6,7 +6,7 @@ class SaveSourceCode
     private function create($prefix)
     {
         $sql = "CREATE TABLE IF NOT EXISTS " . $prefix . "submit (
-                submit_id bigint PRIMARY KEY AUTO_INCREMENT,
+                submit_id bigint PRIMARY KEY AUTO_INCREMENT NOT NULL,
                 post_id bigint(20) UNSIGNED	,
                 user_id bigint(20) UNSIGNED	,
                 author text,
@@ -31,7 +31,8 @@ class SaveSourceCode
         $time = current_time('Y-m-d H:i:s');
 
         global $wpdb;
-        $this->create($wpdb->prefix);
+        $prefix = $wpdb->prefix;
+        $this->create($prefix);
 
         $total = strstr($pass, '/');
         $total = trim($total, '/');
@@ -52,7 +53,7 @@ class SaveSourceCode
             'language' => $lang
         );
 
-        $insert = $wpdb->insert('wp_submit', $data);
+        $insert = $wpdb->insert($prefix.'submit', $data);
 
         if ($insert != false)
             return true;
