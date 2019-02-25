@@ -6,9 +6,9 @@
  * Time: 20:28
  */
 
-class Submissions2
+class Submissions
 {
-    private $url = 'http://localhost/submit_code_api/submissions/requestJudge0Api.php';
+    private $url = 'https://api.chamcode.net/submissions/requestJudge0Api.php';
 
     function request($source_code, $stdin, $expected_output, $lang_id, $cpu_time_limit, $domain, $secret_key)
     {

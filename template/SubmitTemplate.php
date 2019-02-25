@@ -231,7 +231,7 @@ class SubmitTemplate
                                  
                                     await $.ajax({
                                               method: "POST",
-                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api2.php",
+                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api.php",
                                               data: {
                                                   source: b64EncodeUnicode(source_code),
                                                   stdin: b64EncodeUnicode(input[i]),

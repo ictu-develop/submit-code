@@ -8,7 +8,7 @@
 
 class CheckApiLive
 {
-    private $api_url = 'http://localhost/submit_code_api/submissions/requestCheckApiLive.php';
+    private $api_url = 'https://api.chamcode.net/submissions/requestCheckApiLive.php';
 
     function isLive()
     {

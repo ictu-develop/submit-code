@@ -19,7 +19,7 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-require '../core/Submissions2.php';
+require '../core/Submissions.php';
 require_once '../admin/core/GetSecretKey.php';
 require_once '../../../../wp-config.php';
 
@@ -90,7 +90,7 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && isset($_POST['
 
     $domain = $_SERVER['SERVER_NAME'];
 
-    $submissions2 = new Submissions2();
+    $submissions2 = new Submissions();
     $result = $submissions2->request($source, $stdin, $expected_output, $lang_id, $cpu_time_limit, $domain, $secretKey);
 
     echo $result;
