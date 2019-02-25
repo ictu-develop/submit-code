@@ -8,16 +8,15 @@
 
 class CheckApiLive
 {
-    private $api_url = 'https://api.judge0.com';
+    private $api_url = 'http://localhost/submit_code_api/submissions/requestCheckApiLive.php';
 
     function isLive()
     {
         $ch = curl_init($this->api_url);
-        curl_setopt($ch, CURLOPT_HEADER  , false);
-        curl_setopt($ch, CURLOPT_NOBODY  , true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = trim(curl_exec($ch));
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        return $httpCode;
+        return $response;
     }
 }

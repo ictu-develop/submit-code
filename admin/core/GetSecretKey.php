@@ -30,6 +30,3 @@ class GetSecretKey
     }
 
 }
-
-$obj = new GetSecretKey();
-$obj->get();

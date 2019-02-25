@@ -28,6 +28,7 @@ class SecretKeyTemplate
     function form()
     {
         require_once 'core/GetSecretKey.php';
+
         $getSecretKey = new GetSecretKey();
         $secretKey = $getSecretKey->get();
 

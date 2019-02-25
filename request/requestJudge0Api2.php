@@ -19,8 +19,9 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-require '../core/Submissions.php';
-require '../core/GetToken.php';
+require '../core/Submissions2.php';
+require_once '../admin/core/GetSecretKey.php';
+require_once '../../../../wp-config.php';
 
 const In_Queue = 1;
 const Processing = 2;
@@ -36,7 +37,8 @@ const Runtime_Error_NZEC = 11;
 const Runtime_Error_Other = 12;
 const Internal_Error = 13;
 
-if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source'] && $_POST['lang_id']) {
+if (isset($_POST['stdin']) && isset($_POST['expected_output']) && isset($_POST['source']) && isset($_POST['lang_id'])) {
+
     $stdin = $_POST['stdin'];
     $expected_output = $_POST['expected_output'];
     $source = $_POST['source'];
@@ -83,25 +85,13 @@ if (isset($_POST['stdin']) && isset($_POST['expected_output']) && $_POST['source
             }
     }
 
-    $requestToken = new GetToken();
-    $token = $requestToken->get($source, $stdin, $expected_output, $lang_id, $cpu_time_limit);
+    $getSecretKey = new GetSecretKey();
+    $secretKey = $getSecretKey->get();
 
-    $requestSubmissions = new Submissions();
-    $result = $requestSubmissions->submit($token);
-    $resultJson = json_decode($result);
+    $domain = $_SERVER['SERVER_NAME'];
 
-    $index = 0;
-
-    while ($index <= 21) {
-        if ($resultJson->status->id == Processing || $resultJson->status->id == In_Queue) {
-            $result = $requestSubmissions->submit($token);
-            $resultJson = json_decode($result);
-            sleep(0.5);
-        } else
-            break;
-
-        $index++;
-    }
+    $submissions2 = new Submissions2();
+    $result = $submissions2->request($source, $stdin, $expected_output, $lang_id, $cpu_time_limit, $domain, $secretKey);
 
     echo $result;
 }

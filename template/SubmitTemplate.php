@@ -231,7 +231,7 @@ class SubmitTemplate
                                  
                                     await $.ajax({
                                               method: "POST",
-                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api.php",
+                                              url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestJudge0Api2.php",
                                               data: {
                                                   source: b64EncodeUnicode(source_code),
                                                   stdin: b64EncodeUnicode(input[i]),
@@ -240,68 +240,74 @@ class SubmitTemplate
                                                }
                                             })
                                           .done(async function(data) {
-                                              console.log(data);
-                                                                                            
-                                              let json = await JSON.stringify(data);
-                                              let dataJson = await JSON.parse(json);
+                                              console.log("data: " + data);
+                                               
+                                              if (data.hasOwnProperty("activated")) {
+                                                  err = 1;
+                                                  await $("#on-load-test").remove();
+                                                  await $(".submit-result").append("<p class=wrong>Please active plugin</p>");
+                                                  await $(".submit-code-btn").text("Submit");
+                                                  clicked = 0;
+                                              } else {
                                                                                  
-                                              let description = dataJson.status.description;
-                                              let status_id = dataJson.status.id;
-                                              let expected_output = output[i];
-                                              
-                                              console.log("status_id: " + status_id)
-                                                                                           
-                                              if (status_id === Compilation_Error || status_id === Runtime_Error_NZEC 
-                                              || status_id === Runtime_Error_SIGSEGV_ || status_id === Runtime_Error_SIGXFSZ
-                                              || status_id === Runtime_Error_SIGFPE || status_id === Runtime_Error_SIGABRT
-                                              || status_id === Runtime_Error_Other){
-                                                    err = 1;      
-                                                    await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>" + description + "</p>");
-                                                    if (status_id === Compilation_Error) {
-                                                        let complite_output = b64DecodeUnicode(dataJson.compile_output);
-                                                        await $(".submit-result").append("<p class=compilation_error>" + anti(complite_output) + "</p>");
-                                                    } else {
-                                                        let stderr = b64DecodeUnicode(dataJson.stderr);
-                                                        await $(".submit-result").append("<p class=compilation_error>" + stderr + "</p>");
-                                                    }
-                                              } else if (status_id !== Accepted && status_id !== Wrong_Answer && status_id !== Internal_Error){
-                                                    await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>" + description + "</p>");
-                                              }                    
+                                                  let description = data.status.description;
+                                                  let status_id = data.status.id;
+                                                  let expected_output = output[i];
                                                   
-                                              if (status_id === Accepted) {
-                                                    pass++;
-                                                    await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=accepted>"+count_unit_test+". " + description + "</p>");                              
+                                                  console.log("status_id: " + status_id)
+                                                                                               
+                                                  if (status_id === Compilation_Error || status_id === Runtime_Error_NZEC 
+                                                  || status_id === Runtime_Error_SIGSEGV_ || status_id === Runtime_Error_SIGXFSZ
+                                                  || status_id === Runtime_Error_SIGFPE || status_id === Runtime_Error_SIGABRT
+                                                  || status_id === Runtime_Error_Other){
+                                                        err = 1;      
+                                                        await $("#on-load-test").remove();
+                                                        await $(".submit-result").append("<p class=wrong>" + description + "</p>");
+                                                        if (status_id === Compilation_Error) {
+                                                            let complite_output = b64DecodeUnicode(data.compile_output);
+                                                            await $(".submit-result").append("<p class=compilation_error>" + anti(complite_output) + "</p>");
+                                                        } else {
+                                                            let stderr = b64DecodeUnicode(data.stderr);
+                                                            await $(".submit-result").append("<p class=compilation_error>" + stderr + "</p>");
+                                                        }
+                                                  } else if (status_id !== Accepted && status_id !== Wrong_Answer && status_id !== Internal_Error){
+                                                        await $("#on-load-test").remove();
+                                                        await $(".submit-result").append("<p class=wrong>" + description + "</p>");
+                                                  }                    
+                                                      
+                                                  if (status_id === Accepted) {
+                                                        pass++;
+                                                        await $("#on-load-test").remove();
+                                                        await $(".submit-result").append("<p class=accepted>"+count_unit_test+". " + description + "</p>");                              
+                                                  }
+                                                  
+                                                  if (status_id === Wrong_Answer){
+                                                      let your_ouput = "";
+                                                        if (data.stdout !== null)
+                                                            your_ouput = b64DecodeUnicode(data.stdout.trim());
+                                                        else 
+                                                            your_ouput = "";
+                                                        
+                                                        console.log("Your output: " + your_ouput);
+                                                        await $("#on-load-test").remove();
+                                                        await $(".submit-result").append("<p class=wrong>" + count_unit_test + ". "+ description +"</p>");
+                                                        await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
+                                                                                        "" + input[i] + "\n" +
+                                                                                        "<span class=result-title>Test Output:</span>\n" + expected_output + "\n" +
+                                                                                        "<span class=result-title>Your Output:<code></span>\n" + anti(your_ouput) + "</pre></code>");
+                                                  }
+                                                  
+                                                  if (status_id === Internal_Error){
+                                                        let your_ouput = null
+                                                        console.log(your_ouput)
+                                                        await $("#on-load-test")    .remove();
+                                                        await $(".submit-result").append("<p class=wrong>"+count_unit_test+". " + description + " (No Output)</p>");
+                                                        await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
+                                                                                        "" + input[i] + "\n" +
+                                                                                        "<span class=result-title>Test Output:</span>\n"+ expected_output + "\n" +
+                                                                                        "<span class=result-title>Your Output:</span>\n" + anti(your_ouput) + "</pre>");
+                                                  } 
                                               }
-                                              
-                                              if (status_id === Wrong_Answer){
-                                                  let your_ouput = "";
-                                                    if (dataJson.stdout !== null)
-                                                        your_ouput = b64DecodeUnicode(dataJson.stdout.trim());
-                                                    else 
-                                                        your_ouput = "";
-                                                    
-                                                    console.log("Your output: " + your_ouput);
-                                                    await $("#on-load-test").remove();
-                                                    await $(".submit-result").append("<p class=wrong>" + count_unit_test + ". "+ description +"</p>");
-                                                    await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
-                                                                                    "" + input[i] + "\n" +
-                                                                                    "<span class=result-title>Test Output:</span>\n" + expected_output + "\n" +
-                                                                                    "<span class=result-title>Your Output:<code></span>\n" + anti(your_ouput) + "</pre></code>");
-                                              }
-                                              
-                                              if (status_id === Internal_Error){
-                                                    let your_ouput = null
-                                                    console.log(your_ouput)
-                                                    await $("#on-load-test")    .remove();
-                                                    await $(".submit-result").append("<p class=wrong>"+count_unit_test+". " + description + " (No Output)</p>");
-                                                    await $(".submit-result").append("<pre class=pre-result><span class=result-title>Test Input:</span> \n" +
-                                                                                    "" + input[i] + "\n" +
-                                                                                    "<span class=result-title>Test Output:</span>\n"+ expected_output + "\n" +
-                                                                                    "<span class=result-title>Your Output:</span>\n" + anti(your_ouput) + "</pre>");
-                                              } 
                                               
                                           })
                                           .fail(async function(jqXHR, textStatus, errorThrown) {
@@ -310,6 +316,7 @@ class SubmitTemplate
                                               await $(".submit-result").append("<p class=wrong>Error connect</p>");
                                               await $(".submit-code-btn").text("Submit");
                                               clicked = 0;
+                                              console.log(errorThrown)
                                           });
                                     
                                     count_unit_test++;
