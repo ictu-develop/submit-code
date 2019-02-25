@@ -8,12 +8,19 @@
 
 class Submissions
 {
-    private $url = 'https://api.chamcode.net/submissions/requestJudge0Api.php';
+    private $url = 'http://localhost/submit_code_api/submissions/requestJudge0Api.php';
 
     function request($source_code, $stdin, $expected_output, $lang_id, $cpu_time_limit, $domain, $secret_key)
     {
-        $post_params = "source=$source_code&lang_id=$lang_id&stdin=$stdin&expected_output=$expected_output&&domain=$domain&secret_key=$secret_key";
 
+        $post_params = array(
+            'source' => $source_code,
+            'lang_id'=> $lang_id,
+            'stdin' => $stdin,
+            'expected_output' => $expected_output,
+            'domain' => $domain,
+            'secret_key' => $secret_key
+            );
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_params);
