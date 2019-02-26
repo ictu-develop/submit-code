@@ -13,7 +13,6 @@
 
 require_once 'template/SubmitTemplate.php';
 require_once 'admin/ChartTemplate.php';
-require_once 'widget/TopCodeWidget.php';
 require_once 'admin/SecretKeyTemplate.php';
 
 // User template
