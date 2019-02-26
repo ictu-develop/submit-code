@@ -214,6 +214,7 @@ class SubmitTemplate
                         let total = input.length;
                         let pass = 0;
                         let err = 0;
+                        let active = 0;
                         
                         await $(".submit-code-btn").css("color: while")
                         let lang_id = await $(".lang_id").find(":selected").val();
@@ -224,7 +225,7 @@ class SubmitTemplate
                             await $( ".submit-result" ).empty();
                             if (source_code.trim() !== ""){
                                 for (let i=0; i< input.length; i++){
-                                    if (err === 1)
+                                    if (err === 1 || active === 1)
                                         break;
                                     
                                     await $(".submit-result").append("<p class=accepted id=on-load-test>"+count_unit_test+". Running...</p>");
@@ -243,7 +244,7 @@ class SubmitTemplate
                                               console.log("data: " + data);
                                                
                                               if (data.hasOwnProperty("activated")) {
-                                                  err = 1;
+                                                  active = 1;
                                                   await $("#on-load-test").remove();
                                                   await $(".submit-result").append("<p class=wrong>Please active plugin</p>");
                                                   await $(".submit-code-btn").text("Submit");
