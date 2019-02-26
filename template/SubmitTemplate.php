@@ -330,34 +330,37 @@ class SubmitTemplate
                                 else
                                     await $(".submit-result").append("<h4 class=Wrong> Passed: " + pass + "/" + total + "</h4>");
                                 
-                                await $.ajax({
-                                    method: "POST",
-                                    url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestSaveSourceCode.php",
-                                    data: {
-                                         post_id: "' . get_the_ID() . '",
-                                         author: "' . wp_get_current_user()->user_login . '",
-                                         email: "' . wp_get_current_user()->user_email . '",
-                                         source: b64EncodeUnicode(source_code),
-                                         user_id: "' . get_current_user_id() . '",
-                                         pass: pass+"/"+total,
-                                         lang_id: lang_id
-                                    }
-                                 })
-                                .done(async function(data) {
-                                    if (data.trim() === "1")
-                                        console.log("Saved");
-                                    else {
-                                        console.log("Save Error");
-                                        console.log(data);
-                                    }
-                                })
-                                .fail(async function(jqXHR, textStatus, errorThrown) {
-                                  console.log("Save Error");
-                                });
-                                
-                                await $("#on-load-test").remove();
-                                await $(".submit-code-btn").text("Submit");
-                                clicked = 0;
+                                console.log("active: " + active);
+                                if (active === 0) { 
+                                    await $.ajax({
+                                        method: "POST",
+                                        url: "' . get_site_url() . '/wp-content/plugins/submit-code/request/requestSaveSourceCode.php",
+                                        data: {
+                                             post_id: "' . get_the_ID() . '",
+                                             author: "' . wp_get_current_user()->user_login . '",
+                                             email: "' . wp_get_current_user()->user_email . '",
+                                             source: b64EncodeUnicode(source_code),
+                                             user_id: "' . get_current_user_id() . '",
+                                             pass: pass+"/"+total,
+                                             lang_id: lang_id
+                                        }
+                                     })
+                                    .done(async function(data) {
+                                        if (data.trim() === "1")
+                                            console.log("Saved");
+                                        else {
+                                            console.log("Save Error");
+                                            console.log(data);
+                                        }
+                                    })
+                                    .fail(async function(jqXHR, textStatus, errorThrown) {
+                                      console.log("Save Error");
+                                    });
+                                    
+                                    await $("#on-load-test").remove();
+                                    await $(".submit-code-btn").text("Submit");
+                                    clicked = 0;
+                                }
                             }
                         }
                     }
