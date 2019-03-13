@@ -86,7 +86,6 @@ class SubmitTemplate {
 
     function addFilterContent() {
         add_filter('the_content', function ($content) {
-            global $solution;
             $this->solution = $this->getConentByTag($content, '[solution]', '[/solution]');
             $this->solution = $this->encodeTextPreTag($this->solution);
 
@@ -412,7 +411,6 @@ class SubmitTemplate {
                                 })
                                 .done(async function(data) {
                                      console.log(data);
-                                     
                                      for (let i=0; i<data.source.length; i++) { 
                                           let total = data.source[i].pass.substring(data.source[i].pass.indexOf("/") + 1);
                                           let pass = data.source[i].pass.substring(0, data.source[i].pass.length - total.length - 1);
@@ -450,7 +448,6 @@ class SubmitTemplate {
                         
                         show_submit_history();
                         show_submit_history();
-                        
                 </script>';
 
         echo '<div id="myModal" class="modal">                    
@@ -484,24 +481,14 @@ class SubmitTemplate {
 
         echo '<script>
                            async function show_solution(obj) {
-                               let tagPre = obj.getElementsByTagName("pre")[0];
-//                               let tagSpan = obj.getElementsByTagName("span")[0];
-//                               let source = tagPre.textContent;
-                               
-                               
+                               let tagPre = obj.getElementsByTagName("pre")[0];                              
                                let content = tagPre.textContent;
                                content = b64DecodeUnicode(content);
                                if(!content) content = "We will update solution soon";
-//                               let pass = tagSpan.textContent;
-//                               await $(".modal").css("display", "block");
-//                               await $(".history-result-source").text(source);
-//                               await $  (".solution-content").text(b64DecodeUnicode(source));
-//                               myCodeMirror2.getDoc().setValue(source);
                                 var win = window.open("", "Solution", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=500,top="+(screen.height-400)+",left="+(screen.width-840));
                                 win.document.body.innerHTML = content;
                            }
                     </script>';
-
 
         echo '<script>
                     let modal = document.getElementById("myModal");                

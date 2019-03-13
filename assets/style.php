@@ -79,7 +79,6 @@ echo '<style>
             .result-title {
                 font-weight: bold;
             }
-            
             .submit-history-result-date{
                 cursor: pointer;
                 color: #263238;
