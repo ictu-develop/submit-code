@@ -352,8 +352,13 @@ class SubmitTemplate {
                                 
                                 await $(".submit-result").append("<br><br>");
                                 
-                                if (pass === total)
+                                if (pass === total) {
                                     await $(".submit-result").append("<h4 class=accepted> Passed: " + pass + "/" + total + "</h4>");
+                                    let solutionContent = "' . base64_encode($this->solution) . '";
+                                    await $("#id-button-show-solution").append("<button class=button-for-submit onclick=show_solution(this) id=button-show-solution>Xem cách giải của hệ thống</button>");
+                                    await $("#button-show-solution").append("<pre class=submit-history-result-source id=id-show-solution></pre>");
+                                    await $("#id-show-solution").text(solutionContent);
+                                }    
                                 else
                                     await $(".submit-result").append("<h4 class=Wrong> Passed: " + pass + "/" + total + "</h4>");
                                 
